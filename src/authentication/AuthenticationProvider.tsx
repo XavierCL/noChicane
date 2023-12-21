@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { firebaseAuth, useAuthentication } from "./authentication";
+import { firebaseAuth, setUserCredentials } from "./authentication";
 import { AuthenticationPage } from "./AuthenticationPage";
 
 type AuthenticationProviderProps = {
@@ -9,27 +9,37 @@ type AuthenticationProviderProps = {
 export const AuthenticationProvider = ({
   children,
 }: AuthenticationProviderProps) => {
-  const [changeCount, setChangeCount] = useState(0);
-
-  const credential = useAuthentication();
+  const [authReadyState, setAuthReadyState] = useState<
+    "loading" | "loggedIn" | "loggedOut"
+  >("loading");
 
   useEffect(() => {
     firebaseAuth.onAuthStateChanged(
       (newCredential) => {
-        console.log("on auth changed", newCredential);
-        setChangeCount((old) => old + 1);
+        console.log("auth state change", newCredential);
+
+        if (!newCredential) {
+          setAuthReadyState("loggedOut");
+          return;
+        }
+
+        if (newCredential) {
+          setAuthReadyState("loggedIn");
+          setUserCredentials(newCredential);
+          return;
+        }
       },
       (error) => {
-        console.error("auth state is not ready", error);
+        console.error("auth state error", error);
       }
     );
   }, []);
 
-  if (changeCount === 0) {
+  if (authReadyState === "loading") {
     return <AuthenticationPage status="loading" />;
   }
 
-  if (!credential) {
+  if (authReadyState === "loggedOut") {
     return <AuthenticationPage status="loggedOut" />;
   }
 

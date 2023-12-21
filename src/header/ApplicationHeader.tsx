@@ -9,7 +9,7 @@ export const ApplicationHeader = () => {
     <AppBar position="sticky">
       <Toolbar>
         <Title>No chicane</Title>
-        <UserEmail>{userCredential.user.email}</UserEmail>
+        <UserEmail>{userCredential.email}</UserEmail>
       </Toolbar>
     </AppBar>
   );
