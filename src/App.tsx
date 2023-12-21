@@ -1,24 +1,16 @@
-import {
-  AppBar,
-  CssBaseline,
-  ThemeProvider,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { AddNewTransaction } from "./ingredients/AddNewTransaction";
-import { TransactionList } from "./ingredients/TransactionList";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { AddNewTransaction } from "./content/AddNewTransaction";
+import { TransactionList } from "./content/TransactionList";
 import { muiTheme } from "./theme/muiTheme";
 import emotionStyled from "@emotion/styled";
+import { ApplicationHeader } from "./header/ApplicationHeader";
+import { AuthenticationProvider } from "./authentication/AuthenticationProvider";
 
-export const App = () => {
-  return (
-    <ThemeProvider theme={muiTheme}>
-      <CssBaseline />
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography>No chicane</Typography>
-        </Toolbar>
-      </AppBar>
+export const App = () => (
+  <ThemeProvider theme={muiTheme}>
+    <CssBaseline />
+    <AuthenticationProvider>
+      <ApplicationHeader />
       <ApplicationContainer>
         <AddNewTransaction />
         <MainTablesContainer>
@@ -30,9 +22,9 @@ export const App = () => {
           />
         </MainTablesContainer>
       </ApplicationContainer>
-    </ThemeProvider>
-  );
-};
+    </AuthenticationProvider>
+  </ThemeProvider>
+);
 
 const ApplicationContainer = emotionStyled.div`
   padding: 8px;
