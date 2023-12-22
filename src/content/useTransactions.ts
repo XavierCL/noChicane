@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 
 type FirebaseTransaction = {
   id: string;
+  title: string;
   addedDate: { toDate: () => Date };
   transactionDate: { toDate: () => Date };
   totalAmount: number;

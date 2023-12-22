@@ -1,29 +1,30 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { AddNewTransaction } from "./content/AddNewTransaction";
 import { TransactionList } from "./content/TransactionList";
 import { muiTheme } from "./theme/muiTheme";
 import emotionStyled from "@emotion/styled";
 import { ApplicationHeader } from "./header/ApplicationHeader";
 import { AuthenticationProvider } from "./authentication/AuthenticationProvider";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { TopContent } from "./content/topContent/TopContent";
 
 export const App = () => (
-  <ThemeProvider theme={muiTheme}>
-    <CssBaseline />
-    <AuthenticationProvider>
-      <ApplicationHeader />
-      <ApplicationContainer>
-        <AddNewTransaction />
-        <MainTablesContainer>
-          <TransactionList
-            sortSelector={(transaction) => transaction.transactionDate}
-          />
-          <TransactionList
-            sortSelector={(transaction) => transaction.addedDate}
-          />
-        </MainTablesContainer>
-      </ApplicationContainer>
-    </AuthenticationProvider>
-  </ThemeProvider>
+  <LocalizationProvider dateAdapter={AdapterLuxon}>
+    <ThemeProvider theme={muiTheme}>
+      <CssBaseline />
+      <AuthenticationProvider>
+        <ApplicationHeader />
+        <ApplicationContainer>
+          <TopContent />
+          <MainTablesContainer>
+            <TransactionList
+              sortSelector={(transaction) => transaction.transactionDate}
+            />
+          </MainTablesContainer>
+        </ApplicationContainer>
+      </AuthenticationProvider>
+    </ThemeProvider>
+  </LocalizationProvider>
 );
 
 const ApplicationContainer = emotionStyled.div`

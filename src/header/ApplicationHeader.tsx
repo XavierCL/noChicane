@@ -7,13 +7,25 @@ export const ApplicationHeader = () => {
 
   return (
     <AppBar position="sticky">
-      <Toolbar>
+      <AppToolbar>
+        <Logo src="/nochicane.svg" />
         <Title>No chicane</Title>
         <UserEmail>{userCredential.email}</UserEmail>
-      </Toolbar>
+      </AppToolbar>
     </AppBar>
   );
 };
+
+const AppToolbar = emotionStyled(Toolbar)`
+  @media (min-width: 600px) {
+    padding-left: 0;
+  }
+`;
+
+const Logo = emotionStyled.img`
+  height: 64px;
+  padding: 16px;
+`;
 
 const Title = emotionStyled(Typography)`
   flex: 1;

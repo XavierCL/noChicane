@@ -24,6 +24,8 @@ export const TransactionList = ({ sortSelector }: TransactionListProps) => {
 };
 
 const TableContainer = emotionStyled.div`
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   gap: 8px;

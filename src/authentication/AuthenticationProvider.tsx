@@ -16,8 +16,6 @@ export const AuthenticationProvider = ({
   useEffect(() => {
     firebaseAuth.onAuthStateChanged(
       (newCredential) => {
-        console.log("auth state change", newCredential);
-
         if (!newCredential) {
           setAuthReadyState("loggedOut");
           return;
