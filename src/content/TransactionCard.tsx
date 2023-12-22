@@ -6,21 +6,31 @@ export type TransactionData = {
   transactionDate: Date;
   addedDate: Date;
   totalAmount: number;
-  shares: { xcl: number; catb: number };
+  actualPayerShares: Record<string, number>;
+  idealPayerShares: Record<string, number>;
 };
 
 export const TransactionCard = ({
   addedDate,
   transactionDate,
   totalAmount,
-  shares,
+  actualPayerShares,
+  idealPayerShares,
 }: TransactionData) => (
   <TransactionContainer>
     <div>{totalAmount}$</div>
     <div>{addedDate.toISOString()}</div>
     <div>{transactionDate.toISOString()}</div>
     <ShareListContainer>
-      {Object.entries(shares).map(([key, value]) => (
+      {Object.entries(actualPayerShares).map(([key, value]) => (
+        <ShareContainer key={key}>
+          <div>{key}</div>
+          <div>{value}</div>
+        </ShareContainer>
+      ))}
+    </ShareListContainer>
+    <ShareListContainer>
+      {Object.entries(idealPayerShares).map(([key, value]) => (
         <ShareContainer key={key}>
           <div>{key}</div>
           <div>{value}</div>

@@ -3,6 +3,7 @@ import { firebaseApp } from "../firebase/config";
 import { GoogleAuthProvider } from "firebase/auth";
 
 export const firebaseAuth = getAuth(firebaseApp);
+
 export const authProvider = new GoogleAuthProvider();
 let userCredential: User | undefined = undefined;
 
