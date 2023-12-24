@@ -13,3 +13,7 @@ export const setUserCredentials = (newCredential: User) =>
 export const useAuthentication = () => {
   return userCredential!;
 };
+
+export const useIsXcl = () => {
+  return useAuthentication().uid === "CjpvbFe7Uod443sLQdkUMDhtgXD2";
+};

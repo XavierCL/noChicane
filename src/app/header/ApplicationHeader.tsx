@@ -1,6 +1,7 @@
 import emotionStyled from "@emotion/styled";
 import { AppBar, Toolbar, Typography } from "@mui/material";
-import { useAuthentication } from "../authentication/authentication";
+import { useAuthentication } from "../../authentication/authentication";
+import { theme } from "../../theme/muiTheme";
 
 export const ApplicationHeader = () => {
   const userCredential = useAuthentication();
@@ -20,6 +21,8 @@ const AppToolbar = emotionStyled(Toolbar)`
   @media (min-width: 600px) {
     padding-left: 0;
   }
+
+  padding-left: 0;
 `;
 
 const Logo = emotionStyled.img`
@@ -33,4 +36,7 @@ const Title = emotionStyled(Typography)`
 
 const UserEmail = emotionStyled(Typography)`
   flex: 0;
+  background-color: ${theme.backgroundPale};
+  border-radius: 8px;
+  padding: 4px;
 `;

@@ -1,7 +1,10 @@
 import { sum, uniq } from "lodash";
-import { useTransactions } from "../useTransactions";
+import { useTransactions } from "../../../firebase/transactions";
+import { useIsXcl } from "../../../authentication/authentication";
+import { theme } from "../../../theme/muiTheme";
 
 export const Balance = () => {
+  const isXcl = useIsXcl();
   const { data } = useTransactions();
 
   const totalPaid: Record<string, number> = {};
@@ -51,7 +54,17 @@ export const Balance = () => {
 
         return (
           <div key={payerName}>
-            {payerName} owes {idealAmount - amountPaid}$
+            {payerName} owes{" "}
+            <span
+              style={{
+                color:
+                  (payerName === "xcl") === isXcl
+                    ? theme.palette.error
+                    : theme.palette.success,
+              }}
+            >
+              {(idealAmount - amountPaid).toFixed(2)}$
+            </span>
           </div>
         );
       })}

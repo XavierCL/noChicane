@@ -1,16 +1,20 @@
 import { sortBy } from "lodash";
-import { useTransactions } from "./useTransactions";
-import { TransactionCard, TransactionData } from "./TransactionCard";
+import {
+  TransactionCard,
+  TransactionData,
+} from "./transactionCard/TransactionCard";
 import emotionStyled from "@emotion/styled";
+import { CircularProgress } from "@mui/material";
+import { useTransactions } from "../../firebase/transactions";
 
 type TransactionListProps = {
   sortSelector: (transaction: TransactionData) => number | string | Date;
 };
 
 export const TransactionList = ({ sortSelector }: TransactionListProps) => {
-  const transactions = useTransactions().data;
+  const { data: transactions, loading } = useTransactions();
 
-  if (!transactions) return <div>loading</div>;
+  if (loading) return <CircularProgress />;
 
   const sortedTransactions = sortBy(transactions, sortSelector);
 
@@ -29,4 +33,5 @@ const TableContainer = emotionStyled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
 `;
