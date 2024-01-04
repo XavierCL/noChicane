@@ -16,10 +16,13 @@ import { useState } from "react";
 import { addTransaction } from "../../../../firebase/transactions";
 import { useIsXcl } from "../../../../authentication/authentication";
 import { CustomShares } from "../../CustomShares";
+import { sum } from "lodash";
 
 type AddNewTransactionDialogProps = {
   onClose: () => void;
 };
+
+const defaultIdealPayerShares = { xcl: 7, catb: 3 };
 
 export const AddNewTransactionDialog = ({
   onClose,
@@ -43,7 +46,7 @@ export const AddNewTransactionDialog = ({
 
   const [idealPayerShares, setIdealPayerShares] = useState<
     Record<string, number>
-  >({ xcl: 2, catb: 1 });
+  >(defaultIdealPayerShares);
 
   const canSubmit = title && !titleError && amount && !amountError;
 
@@ -57,7 +60,7 @@ export const AddNewTransactionDialog = ({
           ? actualPayerShares
           : { catb: 1 },
       idealPayerShares:
-        owedShares === "custom" ? idealPayerShares : { xcl: 2, catb: 1 },
+        owedShares === "custom" ? idealPayerShares : defaultIdealPayerShares,
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
       title: title ?? "",
@@ -101,14 +104,18 @@ export const AddNewTransactionDialog = ({
             <FormControlLabel
               value="xcl"
               control={<Radio />}
-              label="xcl paid 2/3"
+              label={`xcl paid (${defaultIdealPayerShares.xcl}/${sum(
+                Object.values(defaultIdealPayerShares)
+              )})`}
             />
           )}
           {!isXcl && (
             <FormControlLabel
               value="catb"
               control={<Radio />}
-              label="catb paid (1/3)"
+              label={`catb paid (${defaultIdealPayerShares.catb}/${sum(
+                Object.values(defaultIdealPayerShares)
+              )})`}
             />
           )}
           <FormControlLabel value="custom" control={<Radio />} label="custom" />
