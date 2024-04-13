@@ -4,7 +4,7 @@
 
 # Publish firebase app
 
-`git commit & npx firebase deploy`
+`git commit & npm run build & npx firebase deploy`
 
 # React + TypeScript + Vite
 
