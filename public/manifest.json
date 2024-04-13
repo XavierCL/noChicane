@@ -1,0 +1,19 @@
+{
+  "short_name": "No chicane",
+  "name": "No chicane",
+  "icons": [
+    {
+      "src": "/nochicane.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/nochicane.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#121212",
+  "display": "standalone"
+}

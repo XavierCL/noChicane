@@ -5,9 +5,12 @@ import {
   setDoc,
   Timestamp,
   deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
 } from "firebase/firestore/lite";
 import { firebaseApp } from "../firebase/config";
-import { doc, getDocs } from "firebase/firestore/lite";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { TransactionData } from "../app/content/transactionCard/TransactionCard";
@@ -29,30 +32,50 @@ const transactionCollection = collection(
   TRANSACTION_COLLECTION_NAME
 ) as CollectionReference<FirebaseTransaction, FirebaseTransaction>;
 
-const transactionState = proxy<{ data: TransactionData[]; loading: boolean }>({
+const transactionState = proxy<{
+  data: TransactionData[];
+  // 0 for loading done. Natural number for loading in progress.
+  loadingVersion: number;
+}>({
   data: [],
-  loading: true,
+  loadingVersion: 1,
 });
 
-export const useFetchInitialTransactions = () => {
+export const useFetchTransactions = (orderField: string) => {
   useEffect(() => {
-    getDocs(transactionCollection)
-      .then((query) => {
-        const transactionData = query.docs.map((document) => {
-          const data = document.data();
+    (async () => {
+      const loadingVersion = transactionState.loadingVersion + 1;
 
-          return {
-            ...data,
-            addedDate: data.addedDate.toDate(),
-            transactionDate: data.transactionDate.toDate(),
-          };
-        });
+      try {
+        transactionState.loadingVersion = loadingVersion;
+
+        const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
+          transactionCollection,
+          orderBy(orderField, "desc")
+        );
+
+        const documentsSnapshot = await getDocs<
+          FirebaseTransaction,
+          FirebaseTransaction
+        >(initialQuery);
+
+        if (loadingVersion !== transactionState.loadingVersion) return;
+
+        const transactionData = documentsSnapshot.docs.map((document) =>
+          convertFirebaseTransactionToTransaction(document.data())
+        );
 
         transactionState.data = transactionData;
-        transactionState.loading = false;
-      })
-      .catch((error) => console.error("Couldn't get documents", error));
-  }, []);
+      } catch (error) {
+        transactionState.data = [];
+        console.error("Couldn't get documents", error);
+      } finally {
+        if (transactionState.loadingVersion === loadingVersion) {
+          transactionState.loadingVersion = 0;
+        }
+      }
+    })();
+  }, [orderField]);
 };
 
 export const useTransactions = () => useSnapshot(transactionState);
@@ -102,3 +125,11 @@ export const editTransaction = async (transactionData: TransactionData) => {
 
   Object.assign(foundTransactionData, transactionData);
 };
+
+const convertFirebaseTransactionToTransaction = (
+  firebaseTransaction: FirebaseTransaction
+): TransactionData => ({
+  ...firebaseTransaction,
+  addedDate: firebaseTransaction.addedDate.toDate(),
+  transactionDate: firebaseTransaction.transactionDate.toDate(),
+});

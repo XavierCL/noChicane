@@ -135,6 +135,7 @@ const TransactionContainer = emotionStyled(Card)`
   flex-direction: row;
   justify-content: space-between;
   overflow: visible;
+  gap: 8px;
 `;
 
 const CardLeftSide = emotionStyled.div`

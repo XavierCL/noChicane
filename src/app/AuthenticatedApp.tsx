@@ -2,10 +2,12 @@ import emotionStyled from "@emotion/styled";
 import { ApplicationHeader } from "./header/ApplicationHeader";
 import { TopContent } from "./content/topContent/TopContent";
 import { TransactionList } from "./content/TransactionList";
-import { useFetchInitialTransactions } from "../firebase/transactions";
+import { useFetchTransactions } from "../firebase/transactions";
+
+const ORDER_FIELD = "transactionDate";
 
 export const AuthenticatedApp = () => {
-  useFetchInitialTransactions();
+  useFetchTransactions(ORDER_FIELD);
 
   return (
     <>
@@ -13,11 +15,7 @@ export const AuthenticatedApp = () => {
       <ApplicationContainer>
         <TopContent />
         <MainTablesContainer>
-          <TransactionList
-            sortSelector={(transaction) =>
-              -transaction.transactionDate.valueOf()
-            }
-          />
+          <TransactionList />
         </MainTablesContainer>
       </ApplicationContainer>
     </>
