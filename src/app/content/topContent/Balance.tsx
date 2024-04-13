@@ -2,6 +2,7 @@ import { sum, uniq } from "lodash";
 import { useTransactions } from "../../../firebase/transactions";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
+import emotionStyled from "@emotion/styled";
 
 export const Balance = () => {
   const isXcl = useIsXcl();
@@ -53,7 +54,7 @@ export const Balance = () => {
         if (amountPaid >= idealAmount) return null;
 
         return (
-          <div key={payerName}>
+          <BalanceContainer key={payerName}>
             {payerName} owes{" "}
             <span
               style={{
@@ -65,9 +66,13 @@ export const Balance = () => {
             >
               {(idealAmount - amountPaid).toFixed(2)}$
             </span>
-          </div>
+          </BalanceContainer>
         );
       })}
     </div>
   );
 };
+
+const BalanceContainer = emotionStyled.div`
+  text-align: right;
+`;

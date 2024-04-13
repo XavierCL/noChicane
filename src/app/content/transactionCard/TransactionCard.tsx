@@ -7,6 +7,8 @@ import { useState } from "react";
 import { deleteTransaction } from "../../../firebase/transactions";
 import Edit from "@mui/icons-material/Edit";
 import { EditTransactionDialog } from "./EditTransactionDialog";
+import { useIsXcl } from "../../../authentication/authentication";
+import { theme } from "../../../theme/muiTheme";
 
 export type TransactionData = {
   id: string;
@@ -30,6 +32,7 @@ export const TransactionCard = (transaction: TransactionData) => {
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const isXcl = useIsXcl();
 
   const totalActualShares = sum(Object.values(actualPayerShares));
   const totalIdealShares = sum(Object.values(idealPayerShares));
@@ -55,7 +58,7 @@ export const TransactionCard = (transaction: TransactionData) => {
     <>
       <TransactionContainer>
         <CardLeftSide>
-          <Typography variant="h5">{title}</Typography>
+          <TransactionTitle variant="h5">{title}</TransactionTitle>
           <div>
             {Object.entries(payers).map(([payerName, amount]) => {
               if (amount <= 0) return null;
@@ -79,7 +82,17 @@ export const TransactionCard = (transaction: TransactionData) => {
 
               return (
                 <div key={payerName}>
-                  {payerName} borrowed {(ideal - paid).toFixed(2)}$
+                  {payerName} borrowed{" "}
+                  <span
+                    style={{
+                      color:
+                        (payerName === "xcl") === isXcl
+                          ? theme.palette.error
+                          : theme.palette.success,
+                    }}
+                  >
+                    {(ideal - paid).toFixed(2)}$
+                  </span>
                 </div>
               );
             })}
@@ -124,9 +137,21 @@ const TransactionContainer = emotionStyled(Card)`
   overflow: visible;
 `;
 
-const CardLeftSide = emotionStyled.div``;
+const CardLeftSide = emotionStyled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const TransactionTitle = emotionStyled(Typography)`
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+`;
 
 const CardRightSide = emotionStyled.div`
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
