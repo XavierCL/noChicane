@@ -54,7 +54,7 @@ export const CustomShares = ({
   return (
     <TextField
       multiline
-      rows={3}
+      rows={8}
       value={textValue}
       onChange={(event) => setTextValue(event.target.value)}
       error={!valueFromText}
