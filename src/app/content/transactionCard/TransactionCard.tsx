@@ -20,15 +20,19 @@ export type TransactionData = {
   title: string;
 };
 
-export const TransactionCard = (transaction: TransactionData) => {
-  const {
-    id,
-    title,
-    transactionDate,
-    totalAmount,
-    actualPayerShares,
-    idealPayerShares,
-  } = transaction;
+export type OrderField = "transactionDate" | "addedDate";
+
+type TransactionCardProps = {
+  transaction: TransactionData;
+  orderField: OrderField;
+};
+
+export const TransactionCard = ({
+  transaction,
+  orderField,
+}: TransactionCardProps) => {
+  const { id, title, totalAmount, actualPayerShares, idealPayerShares } =
+    transaction;
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -70,7 +74,7 @@ export const TransactionCard = (transaction: TransactionData) => {
               );
             })}
           </div>
-          <div>{transactionDate.toDateString()}</div>
+          <div>{transaction[orderField].toDateString()}</div>
         </CardLeftSide>
         <CardRightSide>
           <ShareListContainer>

@@ -3,19 +3,21 @@ import { ApplicationHeader } from "./header/ApplicationHeader";
 import { TopContent } from "./content/topContent/TopContent";
 import { TransactionList } from "./content/TransactionList";
 import { useFetchTransactions } from "../firebase/transactions";
-
-const ORDER_FIELD = "transactionDate";
+import { useState } from "react";
+import { OrderField } from "./content/transactionCard/TransactionCard";
 
 export const AuthenticatedApp = () => {
-  useFetchTransactions(ORDER_FIELD);
+  const [orderField, setOrderField] = useState<OrderField>("transactionDate");
+
+  useFetchTransactions();
 
   return (
     <>
       <ApplicationHeader />
       <ApplicationContainer>
-        <TopContent />
+        <TopContent orderField={orderField} setOrderField={setOrderField} />
         <MainTablesContainer>
-          <TransactionList />
+          <TransactionList orderField={orderField} />
         </MainTablesContainer>
       </ApplicationContainer>
     </>

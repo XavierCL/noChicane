@@ -1,17 +1,28 @@
-import { TransactionCard } from "./transactionCard/TransactionCard";
+import { OrderField, TransactionCard } from "./transactionCard/TransactionCard";
 import emotionStyled from "@emotion/styled";
 import { CircularProgress } from "@mui/material";
 import { useTransactions } from "../../firebase/transactions";
+import { orderBy } from "lodash";
 
-export const TransactionList = () => {
+type TransactionListProps = {
+  orderField: OrderField;
+};
+
+export const TransactionList = ({ orderField }: TransactionListProps) => {
   const { data: transactions, loadingVersion: loading } = useTransactions();
 
   if (loading) return <CircularProgress />;
 
+  const sortedTransactions = orderBy(transactions, orderField, "desc");
+
   return (
     <TableContainer>
-      {transactions.map((transaction) => (
-        <TransactionCard key={transaction.id} {...transaction} />
+      {sortedTransactions.map((transaction) => (
+        <TransactionCard
+          key={transaction.id}
+          transaction={transaction}
+          orderField={orderField}
+        />
       ))}
     </TableContainer>
   );

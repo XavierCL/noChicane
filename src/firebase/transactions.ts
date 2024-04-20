@@ -7,7 +7,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  orderBy,
   query,
 } from "firebase/firestore/lite";
 import { firebaseApp } from "../firebase/config";
@@ -41,7 +40,7 @@ const transactionState = proxy<{
   loadingVersion: 1,
 });
 
-export const useFetchTransactions = (orderField: string) => {
+export const useFetchTransactions = () => {
   useEffect(() => {
     (async () => {
       const loadingVersion = transactionState.loadingVersion + 1;
@@ -50,8 +49,7 @@ export const useFetchTransactions = (orderField: string) => {
         transactionState.loadingVersion = loadingVersion;
 
         const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-          transactionCollection,
-          orderBy(orderField, "desc")
+          transactionCollection
         );
 
         const documentsSnapshot = await getDocs<
@@ -75,7 +73,7 @@ export const useFetchTransactions = (orderField: string) => {
         }
       }
     })();
-  }, [orderField]);
+  }, []);
 };
 
 export const useTransactions = () => useSnapshot(transactionState);
@@ -86,6 +84,7 @@ export const addTransaction = async (transactionData: TransactionData) => {
     TRANSACTION_COLLECTION_NAME,
     transactionData.id
   );
+
   await setDoc(documentReference, {
     ...transactionData,
     addedDate: Timestamp.fromDate(transactionData.addedDate),

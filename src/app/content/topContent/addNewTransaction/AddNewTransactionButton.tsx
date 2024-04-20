@@ -9,7 +9,7 @@ export const AddNewTransactionButton = () => {
     <>
       <Button
         variant="contained"
-        style={{ alignSelf: "flex-start" }}
+        style={{ alignSelf: "flex-start", textWrap: "nowrap" }}
         onClick={() => setDialogOpen(true)}
       >
         Add transaction
