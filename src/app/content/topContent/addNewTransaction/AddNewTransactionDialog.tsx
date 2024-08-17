@@ -17,12 +17,11 @@ import { addTransaction } from "../../../../firebase/transactions";
 import { useIsXcl } from "../../../../authentication/authentication";
 import { CustomShares } from "../../CustomShares";
 import { sum } from "lodash";
+import { defaultIdealPayerShares } from "../../DefaultIdealPayerShares";
 
 type AddNewTransactionDialogProps = {
   onClose: () => void;
 };
-
-const defaultIdealPayerShares = { xcl: 7, catb: 3 };
 
 export const AddNewTransactionDialog = ({
   onClose,

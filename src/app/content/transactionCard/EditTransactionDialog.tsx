@@ -17,6 +17,8 @@ import { TransactionData } from "./TransactionCard";
 import { useIsXcl } from "../../../authentication/authentication";
 import { editTransaction } from "../../../firebase/transactions";
 import { CustomShares } from "../CustomShares";
+import { sum } from "lodash";
+import { defaultIdealPayerShares } from "../DefaultIdealPayerShares";
 
 type AddNewTransactionDialogProps = {
   transaction: TransactionData;
@@ -66,7 +68,7 @@ export const EditTransactionDialog = ({
           ? actualPayerShares
           : { catb: 1 },
       idealPayerShares:
-        owedShares === "custom" ? idealPayerShares : { xcl: 2, catb: 1 },
+        owedShares === "custom" ? idealPayerShares : defaultIdealPayerShares,
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
       title: title ?? "",
@@ -108,14 +110,18 @@ export const EditTransactionDialog = ({
             <FormControlLabel
               value="xcl"
               control={<Radio />}
-              label="xcl paid 2/3"
+              label={`xcl paid (${defaultIdealPayerShares.xcl}/${sum(
+                Object.values(defaultIdealPayerShares)
+              )})`}
             />
           )}
           {!isXcl && (
             <FormControlLabel
               value="catb"
               control={<Radio />}
-              label="catb paid (1/3)"
+              label={`catb paid (${defaultIdealPayerShares.catb}/${sum(
+                Object.values(defaultIdealPayerShares)
+              )})`}
             />
           )}
           <FormControlLabel value="custom" control={<Radio />} label="custom" />
