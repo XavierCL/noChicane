@@ -9,6 +9,7 @@ export type FirebaseTransactionInstance = {
   transactionDate: { toDate: () => Date };
   totalAmount: number;
   actualPayerShares: Record<string, number>;
+  actualPayers: Record<string, number>;
   idealPayerShares: Record<string, number>;
 };
 

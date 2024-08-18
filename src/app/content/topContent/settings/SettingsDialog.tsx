@@ -6,7 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import { executeMigration } from "../../../../firebase/migration";
 
-const showMigrations = (() => false)();
+const showMigrations = (() => true)();
 
 type SettingsDialogProps = {
   onClose: () => void;
