@@ -14,8 +14,9 @@ import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { TransactionData } from "../app/content/TransactionData";
 
-type FirebaseTransaction = {
+export type FirebaseTransaction = {
   id: string;
+  transactionType: "instance";
   title: string;
   addedDate: { toDate: () => Date };
   transactionDate: { toDate: () => Date };
@@ -24,9 +25,9 @@ type FirebaseTransaction = {
   idealPayerShares: Record<string, number>;
 };
 
-const database = getFirestore(firebaseApp);
+export const database = getFirestore(firebaseApp);
 const TRANSACTION_COLLECTION_NAME = "transactions";
-const transactionCollection = collection(
+export const transactionCollection = collection(
   database,
   TRANSACTION_COLLECTION_NAME
 ) as CollectionReference<FirebaseTransaction, FirebaseTransaction>;
