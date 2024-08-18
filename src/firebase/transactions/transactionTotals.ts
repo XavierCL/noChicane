@@ -80,6 +80,34 @@ export const useFetchTransactionTotal = () => {
 
 export const useTransactionTotal = () => useSnapshot(transactionTotalState);
 
+export const addTotal = (
+  newTransaction: TransactionData,
+  batch: WriteBatch
+) => {
+  if (!transactionTotalState.data) {
+    throw new Error("Could not get the total transaction");
+  }
+
+  const newTotals = computeBalance([
+    {
+      totalAmount: sum(Object.values(transactionTotalState.data.totalPaid)),
+      actualPayerShares: transactionTotalState.data.totalPaid,
+      idealPayerShares: transactionTotalState.data.totalIdeal,
+    },
+    newTransaction,
+  ]);
+
+  const documentReference = doc(
+    database,
+    TRANSACTION_COLLECTION_NAME,
+    transactionTotalState.data.id
+  );
+
+  batch.update(documentReference, { ...newTotals });
+
+  Object.assign(transactionTotalState.data, newTotals);
+};
+
 export const editTotal = (
   oldTransaction: TransactionData,
   newTransaction: TransactionData,
@@ -110,8 +138,8 @@ export const editTotal = (
   Object.assign(transactionTotalState.data, newTotals);
 };
 
-export const addTotal = (
-  newTransaction: TransactionData,
+export const deleteTotal = (
+  oldTransaction: TransactionData,
   batch: WriteBatch
 ) => {
   if (!transactionTotalState.data) {
@@ -124,7 +152,7 @@ export const addTotal = (
       actualPayerShares: transactionTotalState.data.totalPaid,
       idealPayerShares: transactionTotalState.data.totalIdeal,
     },
-    newTransaction,
+    { ...oldTransaction, totalAmount: -oldTransaction.totalAmount },
   ]);
 
   const documentReference = doc(

@@ -22,6 +22,12 @@ import {
   editTransaction,
 } from "../../../firebase/transactions/transactionInstances";
 import { ShareRadioGroup, ShareType } from "./ShareRadioGroup";
+import { writeBatch } from "firebase/firestore/lite";
+import { database } from "../../../firebase/config";
+import {
+  addTotal,
+  editTotal,
+} from "../../../firebase/transactions/transactionTotals";
 
 type EditTransactionDialogProps = {
   transaction?: TransactionData;
@@ -105,11 +111,15 @@ export const EditTransactionDialog = ({
     };
 
     try {
+      const batch = writeBatch(database);
       if (transaction) {
-        await editTransaction(editedTransaction);
+        editTransaction(editedTransaction, batch);
+        editTotal(transaction, editedTransaction, batch);
       } else {
-        await addTransaction(editedTransaction);
+        addTransaction(editedTransaction, batch);
+        addTotal(editedTransaction, batch);
       }
+      await batch.commit();
     } catch (error) {
       console.error("Error while editing transaction", error);
     }

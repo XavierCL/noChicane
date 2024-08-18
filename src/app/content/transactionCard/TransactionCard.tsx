@@ -4,7 +4,6 @@ import { Card, IconButton, Typography } from "@mui/material";
 import { mapValues, sum, uniq } from "lodash";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useState } from "react";
-import { deleteTransaction } from "../../../firebase/transactions/transactionInstances";
 import Edit from "@mui/icons-material/Edit";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
@@ -20,7 +19,7 @@ export const TransactionCard = ({
   transaction,
   orderField,
 }: TransactionCardProps) => {
-  const { id, title, totalAmount, actualPayerShares, idealPayerShares } =
+  const { title, totalAmount, actualPayerShares, idealPayerShares } =
     transaction;
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -102,12 +101,8 @@ export const TransactionCard = ({
       </TransactionContainer>
       {confirmDeleteOpen && (
         <ConfirmDeleteDialog
+          transaction={transaction}
           onClose={() => setConfirmDeleteOpen(false)}
-          onConfirm={() =>
-            deleteTransaction(id).catch((error) =>
-              console.error("Error deleting transaction", error)
-            )
-          }
         />
       )}
       {editOpen && (

@@ -8,6 +8,7 @@ import {
   where,
   orderBy,
   limit,
+  WriteBatch,
 } from "firebase/firestore/lite";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
@@ -76,14 +77,17 @@ export const useFetchTransactions = (orderField: string) => {
 
 export const useTransactions = () => useSnapshot(transactionState);
 
-export const addTransaction = async (transactionData: TransactionData) => {
+export const addTransaction = (
+  transactionData: TransactionData,
+  batch: WriteBatch
+) => {
   const documentReference = doc(
     database,
     TRANSACTION_COLLECTION_NAME,
     transactionData.id
   );
 
-  await setDoc(documentReference, {
+  batch.set(documentReference, {
     ...transactionData,
     addedDate: Timestamp.fromDate(transactionData.addedDate),
     transactionDate: Timestamp.fromDate(transactionData.transactionDate),
@@ -92,23 +96,26 @@ export const addTransaction = async (transactionData: TransactionData) => {
   transactionState.data.push(transactionData);
 };
 
-export const deleteTransaction = async (id: string) => {
+export const deleteTransaction = (id: string, batch: WriteBatch) => {
   const documentReference = doc(database, TRANSACTION_COLLECTION_NAME, id);
-  await deleteDoc(documentReference);
+  batch.delete(documentReference);
 
   transactionState.data = transactionState.data.filter(
     (transaction) => transaction.id !== id
   );
 };
 
-export const editTransaction = async (transactionData: TransactionData) => {
+export const editTransaction = (
+  transactionData: TransactionData,
+  batch: WriteBatch
+) => {
   const documentReference = doc(
     database,
     TRANSACTION_COLLECTION_NAME,
     transactionData.id
   );
 
-  await setDoc(documentReference, {
+  batch.set(documentReference, {
     ...transactionData,
     addedDate: Timestamp.fromDate(transactionData.addedDate),
     transactionDate: Timestamp.fromDate(transactionData.transactionDate),
