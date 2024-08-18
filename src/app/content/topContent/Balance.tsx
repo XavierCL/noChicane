@@ -1,15 +1,23 @@
-import { sum, uniq } from "lodash";
-import { useTransactions } from "../../../firebase/transactions/transactionInstances";
+import { uniq } from "lodash";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
 import emotionStyled from "@emotion/styled";
-import { computeBalance } from "../../../business/computeBalance";
+import { useTransactionTotal } from "../../../firebase/transactions/transactionTotals";
+import { CircularProgress } from "@mui/material";
 
 export const Balance = () => {
   const isXcl = useIsXcl();
-  const { data } = useTransactions();
+  const { data, loadingVersion } = useTransactionTotal();
 
-  const { totalPaid, totalIdeal } = computeBalance(data);
+  if (loadingVersion) {
+    return <CircularProgress />;
+  }
+
+  if (!data) {
+    return "error";
+  }
+
+  const { totalPaid, totalIdeal } = data;
 
   const allPayers = uniq([
     ...Object.keys(totalPaid),

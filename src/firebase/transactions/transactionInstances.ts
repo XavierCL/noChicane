@@ -6,6 +6,8 @@ import {
   getDocs,
   query,
   where,
+  orderBy,
+  limit,
 } from "firebase/firestore/lite";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
@@ -29,7 +31,7 @@ export const transactionState = proxy<{
   loadingError: false,
 });
 
-export const useFetchTransactions = () => {
+export const useFetchTransactions = (orderField: string) => {
   useEffect(() => {
     (async () => {
       const loadingVersion = transactionState.loadingVersion + 1;
@@ -39,7 +41,9 @@ export const useFetchTransactions = () => {
 
         const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
           transactionCollection,
-          where("transactionType", "==", "instance")
+          where("transactionType", "==", "instance"),
+          orderBy(orderField, "desc"),
+          limit(8)
         );
 
         const documentsSnapshot = await getDocs<
@@ -67,7 +71,7 @@ export const useFetchTransactions = () => {
         }
       }
     })();
-  }, []);
+  }, [orderField]);
 };
 
 export const useTransactions = () => useSnapshot(transactionState);

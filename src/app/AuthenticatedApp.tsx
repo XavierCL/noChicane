@@ -5,11 +5,13 @@ import { TransactionList } from "./content/TransactionList";
 import { useFetchTransactions } from "../firebase/transactions/transactionInstances";
 import { useState } from "react";
 import { OrderField } from "../business/TransactionData";
+import { useFetchTransactionTotal } from "../firebase/transactions/transactionTotals";
 
 export const AuthenticatedApp = () => {
   const [orderField, setOrderField] = useState<OrderField>("transactionDate");
 
-  useFetchTransactions();
+  useFetchTransactions(orderField);
+  useFetchTransactionTotal();
 
   return (
     <>
