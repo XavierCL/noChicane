@@ -1,9 +1,9 @@
 import { TransactionCard } from "./transactionCard/TransactionCard";
 import emotionStyled from "@emotion/styled";
 import { CircularProgress } from "@mui/material";
-import { useTransactions } from "../../firebase/transactions";
+import { useTransactions } from "../../firebase/transactions/transactionInstances";
 import { orderBy } from "lodash";
-import { OrderField } from "./TransactionData";
+import { OrderField } from "../../business/TransactionData";
 
 type TransactionListProps = {
   orderField: OrderField;

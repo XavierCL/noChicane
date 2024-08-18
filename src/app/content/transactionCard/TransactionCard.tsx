@@ -4,11 +4,11 @@ import { Card, IconButton, Typography } from "@mui/material";
 import { mapValues, sum, uniq } from "lodash";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useState } from "react";
-import { deleteTransaction } from "../../../firebase/transactions";
+import { deleteTransaction } from "../../../firebase/transactions/transactionInstances";
 import Edit from "@mui/icons-material/Edit";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
-import { OrderField, TransactionData } from "../TransactionData";
+import { OrderField, TransactionData } from "../../../business/TransactionData";
 import { EditTransactionDialog } from "../editTransaction/EditTransactionDialog";
 
 type TransactionCardProps = {

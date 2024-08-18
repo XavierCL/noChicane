@@ -1,22 +1,13 @@
-import { getDocs, query, writeBatch } from "firebase/firestore/lite";
-import { FirebaseTransaction, transactionCollection } from "./transactions";
-import { database } from "./config";
+import { addDoc } from "firebase/firestore/lite";
+import { transactionCollection } from "./transactions/transactionCollection";
+import { computeBalance } from "../business/computeBalance";
+import { transactionState } from "./transactions/transactionInstances";
 
 export const executeMigration = async () => {
-  const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-    transactionCollection
-  );
+  const balance = computeBalance(transactionState.data);
 
-  const documentsSnapshot = await getDocs<
-    FirebaseTransaction,
-    FirebaseTransaction
-  >(initialQuery);
-
-  const batch = writeBatch(database);
-
-  for (const documentSnapshot of documentsSnapshot.docs) {
-    batch.update(documentSnapshot.ref, { transactionType: "instance" });
-  }
-
-  batch.commit();
+  addDoc(transactionCollection, {
+    transactionType: "total",
+    ...balance,
+  });
 };

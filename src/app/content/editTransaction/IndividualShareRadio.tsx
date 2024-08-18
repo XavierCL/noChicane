@@ -1,6 +1,6 @@
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import { defaultIdealPayerShares } from "../TransactionData";
+import { defaultIdealPayerShares } from "../../../business/TransactionData";
 import { sum } from "lodash";
 
 type IndividualShareRadioProps = {

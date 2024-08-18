@@ -1,6 +1,4 @@
 import {
-  collection,
-  CollectionReference,
   setDoc,
   Timestamp,
   deleteDoc,
@@ -11,27 +9,16 @@ import {
 } from "firebase/firestore/lite";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
-import { TransactionData } from "../app/content/TransactionData";
-import { database } from "./config";
+import { TransactionData } from "../../business/TransactionData";
+import { database } from "../config";
+import {
+  FirebaseTransaction,
+  FirebaseTransactionInstance,
+  TRANSACTION_COLLECTION_NAME,
+  transactionCollection,
+} from "./transactionCollection";
 
-export type FirebaseTransaction = {
-  id: string;
-  transactionType: "instance";
-  title: string;
-  addedDate: { toDate: () => Date };
-  transactionDate: { toDate: () => Date };
-  totalAmount: number;
-  actualPayerShares: Record<string, number>;
-  idealPayerShares: Record<string, number>;
-};
-
-const TRANSACTION_COLLECTION_NAME = "transactions";
-export const transactionCollection = collection(
-  database,
-  TRANSACTION_COLLECTION_NAME
-) as CollectionReference<FirebaseTransaction, FirebaseTransaction>;
-
-const transactionState = proxy<{
+export const transactionState = proxy<{
   data: TransactionData[];
   // 0 for loading done. Natural number for loading in progress.
   loadingVersion: number;
@@ -61,7 +48,9 @@ export const useFetchTransactions = () => {
         if (loadingVersion !== transactionState.loadingVersion) return;
 
         const transactionData = documentsSnapshot.docs.map((document) =>
-          convertFirebaseTransactionToTransaction(document.data())
+          convertFirebaseTransactionToTransaction(
+            document.data() as FirebaseTransactionInstance
+          )
         );
 
         transactionState.data = transactionData;
@@ -127,7 +116,7 @@ export const editTransaction = async (transactionData: TransactionData) => {
 };
 
 const convertFirebaseTransactionToTransaction = (
-  firebaseTransaction: FirebaseTransaction
+  firebaseTransaction: FirebaseTransactionInstance
 ): TransactionData => ({
   ...firebaseTransaction,
   addedDate: firebaseTransaction.addedDate.toDate(),

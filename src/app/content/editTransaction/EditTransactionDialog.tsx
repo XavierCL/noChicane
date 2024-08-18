@@ -11,13 +11,16 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { isEqual } from "lodash";
-import { defaultIdealPayerShares, TransactionData } from "../TransactionData";
+import {
+  defaultIdealPayerShares,
+  TransactionData,
+} from "../../../business/TransactionData";
 import { useIsXcl } from "../../../authentication/authentication";
 import { CustomShares } from "../CustomShares";
 import {
   addTransaction,
   editTransaction,
-} from "../../../firebase/transactions";
+} from "../../../firebase/transactions/transactionInstances";
 import { ShareRadioGroup, ShareType } from "./ShareRadioGroup";
 
 type EditTransactionDialogProps = {

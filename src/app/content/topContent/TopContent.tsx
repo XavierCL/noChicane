@@ -2,7 +2,7 @@ import emotionStyled from "@emotion/styled";
 import { Balance } from "./Balance";
 import { AddNewTransactionButton } from "./AddNewTransactionButton";
 import { SortTransactionByButton } from "./SortTransactionByButton";
-import { OrderField } from "../TransactionData";
+import { OrderField } from "../../../business/TransactionData";
 import { SettingsButton } from "./settings/SettingsButton";
 
 type TopContentProps = {

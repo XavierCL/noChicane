@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import emotionStyled from "@emotion/styled";
-import { OrderField } from "../TransactionData";
+import { OrderField } from "../../../business/TransactionData";
 
 const SORT_OPTIONS: { field: OrderField; label: string }[] = [
   { field: "transactionDate", label: "Transaction date" },
