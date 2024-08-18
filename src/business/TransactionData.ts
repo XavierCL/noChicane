@@ -10,4 +10,10 @@ export type TransactionData = {
   title: string;
 };
 
+export type TransactionTotal = {
+  id: string;
+  totalPaid: Record<string, number>;
+  totalIdeal: Record<string, number>;
+};
+
 export type OrderField = "transactionDate" | "addedDate";

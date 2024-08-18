@@ -22,9 +22,11 @@ export const transactionState = proxy<{
   data: TransactionData[];
   // 0 for loading done. Natural number for loading in progress.
   loadingVersion: number;
+  loadingError: boolean;
 }>({
   data: [],
   loadingVersion: 1,
+  loadingError: false,
 });
 
 export const useFetchTransactions = () => {
@@ -54,8 +56,10 @@ export const useFetchTransactions = () => {
         );
 
         transactionState.data = transactionData;
+        transactionState.loadingError = false;
       } catch (error) {
         transactionState.data = [];
+        transactionState.loadingError = true;
         console.error("Couldn't get documents", error);
       } finally {
         if (transactionState.loadingVersion === loadingVersion) {
@@ -99,6 +103,7 @@ export const editTransaction = async (transactionData: TransactionData) => {
     TRANSACTION_COLLECTION_NAME,
     transactionData.id
   );
+
   await setDoc(documentReference, {
     ...transactionData,
     addedDate: Timestamp.fromDate(transactionData.addedDate),

@@ -13,6 +13,7 @@ export type FirebaseTransactionInstance = {
 };
 
 export type FirebaseTransactionTotal = {
+  id: string;
   transactionType: "total";
   totalPaid: Record<string, number>;
   totalIdeal: Record<string, number>;

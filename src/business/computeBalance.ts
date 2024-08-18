@@ -1,8 +1,11 @@
 import { sum } from "lodash";
-import { TransactionData } from "./TransactionData";
 
 export const computeBalance = (
-  transactions: readonly Readonly<TransactionData>[]
+  transactions: readonly Readonly<{
+    totalAmount: number;
+    actualPayerShares: Record<string, number>;
+    idealPayerShares: Record<string, number>;
+  }>[]
 ) => {
   const totalPaid: Record<string, number> = {};
   const totalIdeal: Record<string, number> = {};
