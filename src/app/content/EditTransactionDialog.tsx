@@ -112,7 +112,7 @@ export const EditTransactionDialog = ({
   };
 
   return (
-    <Dialog open={true} onClose={onClose}>
+    <Dialog open={true} onClose={onClose} disableRestoreFocus>
       <DialogTitle>
         {transaction ? "Edit transaction" : "Add new transaction"}
       </DialogTitle>
