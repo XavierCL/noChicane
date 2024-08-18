@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { OrderField } from "../transactionCard/TransactionCard";
 import {
   ClickAwayListener,
   Grow,
@@ -11,6 +10,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import emotionStyled from "@emotion/styled";
+import { OrderField } from "../TransactionData";
 
 const SORT_OPTIONS: { field: OrderField; label: string }[] = [
   { field: "transactionDate", label: "Transaction date" },

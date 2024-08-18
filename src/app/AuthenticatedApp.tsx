@@ -4,7 +4,7 @@ import { TopContent } from "./content/topContent/TopContent";
 import { TransactionList } from "./content/TransactionList";
 import { useFetchTransactions } from "../firebase/transactions";
 import { useState } from "react";
-import { OrderField } from "./content/transactionCard/TransactionCard";
+import { OrderField } from "./content/TransactionData";
 
 export const AuthenticatedApp = () => {
   const [orderField, setOrderField] = useState<OrderField>("transactionDate");

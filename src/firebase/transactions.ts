@@ -12,7 +12,7 @@ import {
 import { firebaseApp } from "../firebase/config";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
-import { TransactionData } from "../app/content/transactionCard/TransactionCard";
+import { TransactionData } from "../app/content/TransactionData";
 
 type FirebaseTransaction = {
   id: string;
