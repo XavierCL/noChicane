@@ -3,6 +3,7 @@ import { Balance } from "./Balance";
 import { AddNewTransactionButton } from "./AddNewTransactionButton";
 import { SortTransactionByButton } from "./SortTransactionByButton";
 import { OrderField } from "../TransactionData";
+import { SettingsButton } from "./settings/SettingsButton";
 
 type TopContentProps = {
   orderField: OrderField;
@@ -15,6 +16,7 @@ export const TopContent = (orderFieldState: TopContentProps) => {
       <LeftSideContainer>
         <AddNewTransactionButton />
         <SortTransactionByButton {...orderFieldState} />
+        <SettingsButton />
       </LeftSideContainer>
       <Balance />
     </Container>

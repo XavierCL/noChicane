@@ -1,5 +1,4 @@
 import {
-  getFirestore,
   collection,
   CollectionReference,
   setDoc,
@@ -8,11 +7,12 @@ import {
   doc,
   getDocs,
   query,
+  where,
 } from "firebase/firestore/lite";
-import { firebaseApp } from "../firebase/config";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { TransactionData } from "../app/content/TransactionData";
+import { database } from "./config";
 
 export type FirebaseTransaction = {
   id: string;
@@ -25,7 +25,6 @@ export type FirebaseTransaction = {
   idealPayerShares: Record<string, number>;
 };
 
-export const database = getFirestore(firebaseApp);
 const TRANSACTION_COLLECTION_NAME = "transactions";
 export const transactionCollection = collection(
   database,
@@ -50,7 +49,8 @@ export const useFetchTransactions = () => {
         transactionState.loadingVersion = loadingVersion;
 
         const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-          transactionCollection
+          transactionCollection,
+          where("transactionType", "==", "instance")
         );
 
         const documentsSnapshot = await getDocs<

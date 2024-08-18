@@ -8,24 +8,22 @@ type ConfirmDeleteDialogProps = {
 export const ConfirmDeleteDialog = ({
   onClose,
   onConfirm,
-}: ConfirmDeleteDialogProps) => {
-  return (
-    <Dialog open={true}>
-      <DialogTitle>Do you really want to delete this transaction?</DialogTitle>
-      <DialogActions>
-        <Button variant="outlined" onClick={() => onClose()}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            onConfirm();
-            onClose();
-          }}
-        >
-          Confirm
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
+}: ConfirmDeleteDialogProps) => (
+  <Dialog open={true}>
+    <DialogTitle>Do you really want to delete this transaction?</DialogTitle>
+    <DialogActions>
+      <Button variant="outlined" onClick={() => onClose()}>
+        Cancel
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => {
+          onConfirm();
+          onClose();
+        }}
+      >
+        Confirm
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
