@@ -9,7 +9,7 @@ import Edit from "@mui/icons-material/Edit";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
 import { OrderField, TransactionData } from "../TransactionData";
-import { EditTransactionDialog } from "../EditTransactionDialog";
+import { EditTransactionDialog } from "../editTransaction/EditTransactionDialog";
 
 type TransactionCardProps = {
   transaction: TransactionData;

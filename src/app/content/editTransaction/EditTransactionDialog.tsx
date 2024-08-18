@@ -4,20 +4,21 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
   TextField,
 } from "@mui/material";
 import emotionStyled from "@emotion/styled";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
-import { isEqual, sum } from "lodash";
-import { defaultIdealPayerShares, TransactionData } from "./TransactionData";
-import { useIsXcl } from "../../authentication/authentication";
-import { CustomShares } from "./CustomShares";
-import { addTransaction, editTransaction } from "../../firebase/transactions";
+import { isEqual } from "lodash";
+import { defaultIdealPayerShares, TransactionData } from "../TransactionData";
+import { useIsXcl } from "../../../authentication/authentication";
+import { CustomShares } from "../CustomShares";
+import {
+  addTransaction,
+  editTransaction,
+} from "../../../firebase/transactions";
+import { ShareRadioGroup, ShareType } from "./ShareRadioGroup";
 
 type EditTransactionDialogProps = {
   transaction?: TransactionData;
@@ -47,7 +48,7 @@ export const EditTransactionDialog = ({
       : DateTime.now()
   );
 
-  const [owedShares, setOwedShares] = useState(() => {
+  const [owedShares, setOwedShares] = useState<ShareType>(() => {
     if (!transaction) {
       return isXcl ? "xcl" : "catb";
     }
@@ -139,30 +140,10 @@ export const EditTransactionDialog = ({
           value={date}
           onChange={(newDate) => newDate && setDate(newDate)}
         />
-        <RadioGroup
-          value={owedShares}
-          onChange={(event) => setOwedShares(event.target.value)}
-        >
-          {isXcl && (
-            <FormControlLabel
-              value="xcl"
-              control={<Radio />}
-              label={`xcl paid (${defaultIdealPayerShares.xcl}/${sum(
-                Object.values(defaultIdealPayerShares)
-              )})`}
-            />
-          )}
-          {!isXcl && (
-            <FormControlLabel
-              value="catb"
-              control={<Radio />}
-              label={`catb paid (${defaultIdealPayerShares.catb}/${sum(
-                Object.values(defaultIdealPayerShares)
-              )})`}
-            />
-          )}
-          <FormControlLabel value="custom" control={<Radio />} label="custom" />
-        </RadioGroup>
+        <ShareRadioGroup
+          shareType={owedShares}
+          onShareTypeChanged={setOwedShares}
+        />
         {owedShares === "custom" && (
           <CustomShares
             defaultActualPayerShares={actualPayerShares}
