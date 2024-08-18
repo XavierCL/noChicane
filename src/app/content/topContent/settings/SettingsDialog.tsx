@@ -6,6 +6,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
 import { executeMigration } from "../../../../firebase/migration";
 
+const showMigrations = (() => false)();
+
 type SettingsDialogProps = {
   onClose: () => void;
 };
@@ -25,13 +27,15 @@ export const SettingsDialog = ({ onClose }: SettingsDialogProps) => {
     <Dialog open={true}>
       <DialogTitle>Settings</DialogTitle>
       <DialogContent>
-        <Button
-          variant="outlined"
-          disabled={migrationLoading}
-          onClick={onMigrationClick}
-        >
-          Migrate data {migrationLoading && <CircularProgress />}
-        </Button>
+        {showMigrations && (
+          <Button
+            variant="outlined"
+            disabled={migrationLoading}
+            onClick={onMigrationClick}
+          >
+            Migrate data {migrationLoading && <CircularProgress />}
+          </Button>
+        )}
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={() => onClose()}>

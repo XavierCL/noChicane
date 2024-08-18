@@ -1,30 +1,49 @@
 import { TransactionCard } from "./transactionCard/TransactionCard";
 import emotionStyled from "@emotion/styled";
 import { CircularProgress } from "@mui/material";
-import { useTransactions } from "../../firebase/transactions/transactionInstances";
+import {
+  fetchMoreTransactions,
+  useTransactions,
+} from "../../firebase/transactions/transactionInstances";
 import { orderBy } from "lodash";
-import { OrderField } from "../../business/TransactionData";
+import { useRef } from "react";
 
-type TransactionListProps = {
-  orderField: OrderField;
-};
+const INFINITE_SCROLL_OFFSET = 30;
 
-export const TransactionList = ({ orderField }: TransactionListProps) => {
-  const { data: transactions, loadingVersion: loading } = useTransactions();
+export const TransactionList = () => {
+  const {
+    data: transactions,
+    loadingVersion: loading,
+    orderField,
+  } = useTransactions();
 
-  if (loading) return <CircularProgress />;
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const sortedTransactions = orderBy(transactions, orderField, "desc");
 
+  const onScroll = () => {
+    if (!tableContainerRef.current) return;
+
+    if (
+      tableContainerRef.current.scrollTop >=
+      tableContainerRef.current.scrollHeight -
+        tableContainerRef.current.offsetHeight -
+        INFINITE_SCROLL_OFFSET
+    ) {
+      fetchMoreTransactions();
+    }
+  };
+
   return (
-    <TableContainer>
+    <TableContainer ref={tableContainerRef} onScroll={onScroll}>
       {sortedTransactions.map((transaction) => (
-        <TransactionCard
-          key={transaction.id}
-          transaction={transaction}
-          orderField={orderField}
-        />
+        <TransactionCard key={transaction.id} transaction={transaction} />
       ))}
+      {loading ? (
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
+      ) : null}
     </TableContainer>
   );
 };
@@ -36,4 +55,10 @@ const TableContainer = emotionStyled.div`
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+`;
+
+const LoadingContainer = emotionStyled.div`
+  min-height: 48px;
+  max-height: 48px;
+  text-align: center;
 `;

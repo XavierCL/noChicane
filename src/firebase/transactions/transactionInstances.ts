@@ -1,7 +1,5 @@
 import {
-  setDoc,
   Timestamp,
-  deleteDoc,
   doc,
   getDocs,
   query,
@@ -9,10 +7,11 @@ import {
   orderBy,
   limit,
   WriteBatch,
+  startAfter,
 } from "firebase/firestore/lite";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
-import { TransactionData } from "../../business/TransactionData";
+import { OrderField, TransactionData } from "../../business/TransactionData";
 import { database } from "../config";
 import {
   FirebaseTransaction,
@@ -21,18 +20,29 @@ import {
   transactionCollection,
 } from "./transactionCollection";
 
+const PAGE_SIZE = 8;
+
 export const transactionState = proxy<{
   data: TransactionData[];
+  moreData: boolean;
+  latestPage?: Date | string;
   // 0 for loading done. Natural number for loading in progress.
   loadingVersion: number;
   loadingError: boolean;
+  orderField: OrderField;
 }>({
   data: [],
+  moreData: true,
   loadingVersion: 1,
   loadingError: false,
+  orderField: "transactionDate",
 });
 
-export const useFetchTransactions = (orderField: string) => {
+export const useTransactions = () => useSnapshot(transactionState);
+
+export const useFetchTransactions = () => {
+  const { orderField } = useTransactions();
+
   useEffect(() => {
     (async () => {
       const loadingVersion = transactionState.loadingVersion + 1;
@@ -44,7 +54,7 @@ export const useFetchTransactions = (orderField: string) => {
           transactionCollection,
           where("transactionType", "==", "instance"),
           orderBy(orderField, "desc"),
-          limit(8)
+          limit(PAGE_SIZE)
         );
 
         const documentsSnapshot = await getDocs<
@@ -62,6 +72,10 @@ export const useFetchTransactions = (orderField: string) => {
 
         transactionState.data = transactionData;
         transactionState.loadingError = false;
+        transactionState.moreData = documentsSnapshot.size === PAGE_SIZE;
+        transactionState.latestPage = documentsSnapshot.docs.at(-1)!.data()[
+          orderField as keyof FirebaseTransaction
+        ];
       } catch (error) {
         transactionState.data = [];
         transactionState.loadingError = true;
@@ -75,7 +89,53 @@ export const useFetchTransactions = (orderField: string) => {
   }, [orderField]);
 };
 
-export const useTransactions = () => useSnapshot(transactionState);
+export const fetchMoreTransactions = async () => {
+  if (transactionState.loadingVersion) return;
+  if (!transactionState.moreData) return;
+  if (!transactionState.latestPage) return;
+  if (transactionState.loadingError) return;
+
+  const loadingVersion = transactionState.loadingVersion + 1;
+
+  try {
+    transactionState.loadingVersion = loadingVersion;
+
+    const fetchMoreQuery = query<FirebaseTransaction, FirebaseTransaction>(
+      transactionCollection,
+      where("transactionType", "==", "instance"),
+      orderBy(transactionState.orderField, "desc"),
+      startAfter(transactionState.latestPage),
+      limit(PAGE_SIZE)
+    );
+
+    const documentsSnapshot = await getDocs<
+      FirebaseTransaction,
+      FirebaseTransaction
+    >(fetchMoreQuery);
+
+    if (loadingVersion !== transactionState.loadingVersion) return;
+
+    const transactionData = documentsSnapshot.docs.map((document) =>
+      convertFirebaseTransactionToTransaction(
+        document.data() as FirebaseTransactionInstance
+      )
+    );
+
+    transactionState.data = [...transactionState.data, ...transactionData];
+    transactionState.loadingError = false;
+    transactionState.moreData = documentsSnapshot.size === PAGE_SIZE;
+    transactionState.latestPage = documentsSnapshot.docs.at(-1)!.data()[
+      transactionState.orderField as keyof FirebaseTransaction
+    ];
+  } catch (error) {
+    transactionState.loadingError = true;
+    console.error("Couldn't get documents", error);
+  } finally {
+    if (transactionState.loadingVersion === loadingVersion) {
+      transactionState.loadingVersion = 0;
+    }
+  }
+};
 
 export const addTransaction = (
   transactionData: TransactionData,

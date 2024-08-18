@@ -11,21 +11,18 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import emotionStyled from "@emotion/styled";
 import { OrderField } from "../../../business/TransactionData";
+import {
+  transactionState,
+  useTransactions,
+} from "../../../firebase/transactions/transactionInstances";
 
 const SORT_OPTIONS: { field: OrderField; label: string }[] = [
   { field: "transactionDate", label: "Transaction date" },
   { field: "addedDate", label: "Added date" },
 ];
 
-type SortTransactionByButtonProps = {
-  orderField: OrderField;
-  setOrderField: (newOrderField: OrderField) => void;
-};
-
-export const SortTransactionByButton = ({
-  orderField,
-  setOrderField,
-}: SortTransactionByButtonProps) => {
+export const SortTransactionByButton = () => {
+  const { orderField } = useTransactions();
   const [isOpen, setOpen] = useState(false);
   const anchorElement = useRef<HTMLButtonElement>(null);
 
@@ -56,7 +53,7 @@ export const SortTransactionByButton = ({
                       key={field}
                       selected={field === orderField}
                       onClick={() => {
-                        setOrderField(field);
+                        transactionState.orderField = field;
                         setOpen(false);
                       }}
                     >

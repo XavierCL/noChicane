@@ -7,21 +7,19 @@ import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
-import { OrderField, TransactionData } from "../../../business/TransactionData";
+import { TransactionData } from "../../../business/TransactionData";
 import { EditTransactionDialog } from "../editTransaction/EditTransactionDialog";
+import { useTransactions } from "../../../firebase/transactions/transactionInstances";
 
 type TransactionCardProps = {
   transaction: TransactionData;
-  orderField: OrderField;
 };
 
-export const TransactionCard = ({
-  transaction,
-  orderField,
-}: TransactionCardProps) => {
+export const TransactionCard = ({ transaction }: TransactionCardProps) => {
   const { title, totalAmount, actualPayerShares, idealPayerShares } =
     transaction;
 
+  const { orderField } = useTransactions();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const isXcl = useIsXcl();
