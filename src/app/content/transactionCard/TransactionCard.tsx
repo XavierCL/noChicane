@@ -6,21 +6,10 @@ import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useState } from "react";
 import { deleteTransaction } from "../../../firebase/transactions";
 import Edit from "@mui/icons-material/Edit";
-import { EditTransactionDialog } from "./EditTransactionDialog";
 import { useIsXcl } from "../../../authentication/authentication";
 import { theme } from "../../../theme/muiTheme";
-
-export type TransactionData = {
-  id: string;
-  transactionDate: Date;
-  addedDate: Date;
-  totalAmount: number;
-  actualPayerShares: Record<string, number>;
-  idealPayerShares: Record<string, number>;
-  title: string;
-};
-
-export type OrderField = "transactionDate" | "addedDate";
+import { OrderField, TransactionData } from "../TransactionData";
+import { EditTransactionDialog } from "../EditTransactionDialog";
 
 type TransactionCardProps = {
   transaction: TransactionData;
@@ -123,8 +112,8 @@ export const TransactionCard = ({
       )}
       {editOpen && (
         <EditTransactionDialog
-          onClose={() => setEditOpen(false)}
           transaction={transaction}
+          onClose={() => setEditOpen(false)}
         />
       )}
     </>

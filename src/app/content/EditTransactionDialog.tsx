@@ -13,29 +13,28 @@ import emotionStyled from "@emotion/styled";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
-import { TransactionData } from "./TransactionCard";
-import { useIsXcl } from "../../../authentication/authentication";
-import { editTransaction } from "../../../firebase/transactions";
-import { CustomShares } from "../CustomShares";
-import { sum } from "lodash";
-import { defaultIdealPayerShares } from "../DefaultIdealPayerShares";
+import { isEqual, sum } from "lodash";
+import { defaultIdealPayerShares, TransactionData } from "./TransactionData";
+import { useIsXcl } from "../../authentication/authentication";
+import { CustomShares } from "./CustomShares";
+import { addTransaction, editTransaction } from "../../firebase/transactions";
 
-type AddNewTransactionDialogProps = {
-  transaction: TransactionData;
+type EditTransactionDialogProps = {
+  transaction?: TransactionData;
   onClose: () => void;
 };
 
 export const EditTransactionDialog = ({
   transaction,
   onClose,
-}: AddNewTransactionDialogProps) => {
+}: EditTransactionDialogProps) => {
   const isXcl = useIsXcl();
 
-  const [title, setTitle] = useState<string>(transaction.title);
+  const [title, setTitle] = useState<string | undefined>(transaction?.title);
   const titleError = title !== undefined && title.trim() === "";
 
-  const [amount, setAmount] = useState<string>(
-    transaction.totalAmount.toFixed(2)
+  const [amount, setAmount] = useState<string | undefined>(
+    transaction?.totalAmount.toFixed(2)
   );
 
   const amountError =
@@ -43,42 +42,80 @@ export const EditTransactionDialog = ({
     (amount.trim() === "" || isNaN(Number(amount)) || Number(amount) <= 0);
 
   const [date, setDate] = useState(
-    DateTime.fromJSDate(transaction.transactionDate)
+    transaction
+      ? DateTime.fromJSDate(transaction.transactionDate)
+      : DateTime.now()
   );
 
-  const [owedShares, setOwedShares] = useState("custom");
+  const [owedShares, setOwedShares] = useState(() => {
+    if (!transaction) {
+      return isXcl ? "xcl" : "catb";
+    }
+
+    if (!isEqual(transaction.idealPayerShares, defaultIdealPayerShares)) {
+      return "custom";
+    }
+
+    if (
+      transaction.actualPayerShares["xcl"] &&
+      !transaction.actualPayerShares["catb"]
+    ) {
+      return "xcl";
+    }
+
+    if (
+      !transaction.actualPayerShares["xcl"] &&
+      transaction.actualPayerShares["catb"]
+    ) {
+      return "catb";
+    }
+
+    return "custom";
+  });
 
   const [actualPayerShares, setActualPayerShares] = useState<
     Record<string, number>
-  >(transaction.actualPayerShares);
+  >(transaction?.actualPayerShares ?? { xcl: 0.5, catb: 0.5 });
 
   const [idealPayerShares, setIdealPayerShares] = useState<
     Record<string, number>
-  >(transaction.idealPayerShares);
+  >(transaction?.idealPayerShares ?? defaultIdealPayerShares);
 
   const canSubmit = title && !titleError && amount && !amountError;
 
-  const onEdit = () => {
-    editTransaction({
-      id: transaction.id,
+  const onSubmit = async () => {
+    const editedTransaction = {
+      id: transaction?.id ?? crypto.randomUUID(),
       actualPayerShares:
         owedShares === "xcl"
           ? { xcl: 1 }
-          : owedShares === "custom"
-          ? actualPayerShares
-          : { catb: 1 },
+          : owedShares === "catb"
+          ? { catb: 1 }
+          : actualPayerShares,
       idealPayerShares:
         owedShares === "custom" ? idealPayerShares : defaultIdealPayerShares,
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
-      title: title ?? "",
+      title: title ?? "Invalid transaction",
       totalAmount: Number(amount),
-    }).catch((error) => console.error("Error while adding transaction", error));
+    };
+
+    try {
+      if (transaction) {
+        await editTransaction(editedTransaction);
+      } else {
+        await addTransaction(editedTransaction);
+      }
+    } catch (error) {
+      console.error("Error while editing transaction", error);
+    }
   };
 
   return (
     <Dialog open={true} onClose={onClose}>
-      <DialogTitle>Add new transaction</DialogTitle>
+      <DialogTitle>
+        {transaction ? "Edit transaction" : "Add new transaction"}
+      </DialogTitle>
       <TransactionDialogContent>
         <TextField
           autoFocus
@@ -150,11 +187,11 @@ export const EditTransactionDialog = ({
           variant="contained"
           disabled={!canSubmit}
           onClick={() => {
-            onEdit();
+            onSubmit();
             onClose();
           }}
         >
-          Edit
+          {transaction ? "Edit" : "Add"}
         </Button>
       </DialogActions>
     </Dialog>

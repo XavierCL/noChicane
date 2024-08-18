@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
-import { AddNewTransactionDialog } from "./AddNewTransactionDialog";
+import { EditTransactionDialog } from "../EditTransactionDialog";
 
 export const AddNewTransactionButton = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -15,7 +15,7 @@ export const AddNewTransactionButton = () => {
         Add transaction
       </Button>
       {dialogOpen && (
-        <AddNewTransactionDialog onClose={() => setDialogOpen(false)} />
+        <EditTransactionDialog onClose={() => setDialogOpen(false)} />
       )}
     </>
   );

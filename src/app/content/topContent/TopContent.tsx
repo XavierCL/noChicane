@@ -1,8 +1,8 @@
 import emotionStyled from "@emotion/styled";
 import { Balance } from "./Balance";
-import { AddNewTransactionButton } from "./addNewTransaction/AddNewTransactionButton";
-import { OrderField } from "../transactionCard/TransactionCard";
+import { AddNewTransactionButton } from "./AddNewTransactionButton";
 import { SortTransactionByButton } from "./SortTransactionByButton";
+import { OrderField } from "../TransactionData";
 
 type TopContentProps = {
   orderField: OrderField;
