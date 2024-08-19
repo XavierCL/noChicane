@@ -10,7 +10,7 @@ import emotionStyled from "@emotion/styled";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
-import { isEmpty, isEqual, mapValues, pickBy, sum, uniq } from "lodash";
+import { isEmpty, isEqual, mapValues, pickBy, sum } from "lodash";
 import {
   defaultIdealPayerShares,
   TransactionData,
