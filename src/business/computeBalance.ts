@@ -2,40 +2,30 @@ import { sum } from "lodash";
 
 export const computeBalance = (
   transactions: readonly Readonly<{
-    totalAmount: number;
-    actualPayerShares: Record<string, number>;
+    actualPayers: Record<string, number>;
     idealPayerShares: Record<string, number>;
+    rollback?: boolean;
   }>[]
 ) => {
   const totalPaid: Record<string, number> = {};
   const totalIdeal: Record<string, number> = {};
 
   for (const transaction of transactions) {
-    const { totalAmount, actualPayerShares, idealPayerShares } = transaction;
-    const totalPayerShares = sum(Object.values(actualPayerShares));
+    const { actualPayers, idealPayerShares, rollback } = transaction;
+    const totalPayed = sum(Object.values(actualPayers));
     const totalIdealShares = sum(Object.values(idealPayerShares));
+    const rollbackSign = rollback ? -1 : 1;
 
-    if (totalPayerShares <= 0 || totalIdealShares <= 0) {
-      console.error("Invalid transaction", transaction);
-      continue;
-    }
-
-    for (const [actualPayer, actualShare] of Object.entries(
-      actualPayerShares
-    )) {
-      if (actualShare <= 0) continue;
-
-      const amountPaid = (totalAmount * actualShare) / totalPayerShares;
-
-      totalPaid[actualPayer] = (totalPaid[actualPayer] ?? 0) + amountPaid;
+    for (const [actualPayer, actualPaid] of Object.entries(actualPayers)) {
+      totalPaid[actualPayer] =
+        (totalPaid[actualPayer] ?? 0) + actualPaid * rollbackSign;
     }
 
     for (const [idealPayer, idealShare] of Object.entries(idealPayerShares)) {
-      if (idealShare <= 0) continue;
+      const idealAmount = (totalPayed * idealShare) / totalIdealShares;
 
-      const idealAmount = (totalAmount * idealShare) / totalIdealShares;
-
-      totalIdeal[idealPayer] = (totalIdeal[idealPayer] ?? 0) + idealAmount;
+      totalIdeal[idealPayer] =
+        (totalIdeal[idealPayer] ?? 0) + idealAmount * rollbackSign;
     }
   }
 

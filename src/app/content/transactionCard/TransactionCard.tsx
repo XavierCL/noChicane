@@ -16,33 +16,30 @@ type TransactionCardProps = {
 };
 
 export const TransactionCard = ({ transaction }: TransactionCardProps) => {
-  const { title, totalAmount, actualPayerShares, idealPayerShares } =
-    transaction;
+  const { title, actualPayers, idealPayerShares } = transaction;
 
   const { orderField } = useTransactions();
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const isXcl = useIsXcl();
 
-  const totalActualShares = sum(Object.values(actualPayerShares));
+  const totalAmount = sum(Object.values(actualPayers));
   const totalIdealShares = sum(Object.values(idealPayerShares));
 
-  if (totalActualShares <= 0 || totalIdealShares <= 0) {
+  if (totalAmount <= 0 || totalIdealShares <= 0) {
     console.error("Invalid transaction card", transaction);
     return <TransactionContainer>error</TransactionContainer>;
   }
-
-  const payers = mapValues(
-    actualPayerShares,
-    (share) => (totalAmount * share) / totalActualShares
-  );
 
   const ideals = mapValues(
     idealPayerShares,
     (share) => (totalAmount * share) / totalIdealShares
   );
 
-  const allPayers = uniq([...Object.keys(payers), ...Object.keys(ideals)]);
+  const allPayers = uniq([
+    ...Object.keys(actualPayers),
+    ...Object.keys(ideals),
+  ]);
 
   return (
     <>
@@ -50,7 +47,7 @@ export const TransactionCard = ({ transaction }: TransactionCardProps) => {
         <CardLeftSide>
           <TransactionTitle variant="h5">{title}</TransactionTitle>
           <div>
-            {Object.entries(payers).map(([payerName, amount]) => {
+            {Object.entries(actualPayers).map(([payerName, amount]) => {
               if (amount <= 0) return null;
 
               return (
@@ -65,7 +62,7 @@ export const TransactionCard = ({ transaction }: TransactionCardProps) => {
         <CardRightSide>
           <ShareListContainer>
             {allPayers.map((payerName) => {
-              const paid = payers[payerName] ?? 0;
+              const paid = actualPayers[payerName] ?? 0;
               const ideal = ideals[payerName] ?? 0;
 
               if (paid >= ideal) return null;

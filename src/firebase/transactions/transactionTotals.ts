@@ -18,7 +18,6 @@ import {
   transactionCollection,
 } from "./transactionCollection";
 import { computeBalance } from "../../business/computeBalance";
-import { sum } from "lodash";
 
 export const transactionTotalState = proxy<{
   data?: TransactionTotal;
@@ -90,8 +89,7 @@ export const addTotal = (
 
   const newTotals = computeBalance([
     {
-      totalAmount: sum(Object.values(transactionTotalState.data.totalPaid)),
-      actualPayerShares: transactionTotalState.data.totalPaid,
+      actualPayers: transactionTotalState.data.totalPaid,
       idealPayerShares: transactionTotalState.data.totalIdeal,
     },
     newTransaction,
@@ -119,11 +117,10 @@ export const editTotal = (
 
   const newTotals = computeBalance([
     {
-      totalAmount: sum(Object.values(transactionTotalState.data.totalPaid)),
-      actualPayerShares: transactionTotalState.data.totalPaid,
+      actualPayers: transactionTotalState.data.totalPaid,
       idealPayerShares: transactionTotalState.data.totalIdeal,
     },
-    { ...oldTransaction, totalAmount: -oldTransaction.totalAmount },
+    { ...oldTransaction, rollback: true },
     newTransaction,
   ]);
 
@@ -148,11 +145,10 @@ export const deleteTotal = (
 
   const newTotals = computeBalance([
     {
-      totalAmount: sum(Object.values(transactionTotalState.data.totalPaid)),
-      actualPayerShares: transactionTotalState.data.totalPaid,
+      actualPayers: transactionTotalState.data.totalPaid,
       idealPayerShares: transactionTotalState.data.totalIdeal,
     },
-    { ...oldTransaction, totalAmount: -oldTransaction.totalAmount },
+    { ...oldTransaction, rollback: true },
   ]);
 
   const documentReference = doc(

@@ -10,7 +10,7 @@ import emotionStyled from "@emotion/styled";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
-import { isEmpty, isEqual, mapValues, pickBy, sum } from "lodash";
+import { isEmpty, isEqual, mapValues, pickBy, sum, uniq } from "lodash";
 import {
   defaultIdealPayerShares,
   TransactionData,
@@ -37,6 +37,7 @@ export const EditTransactionDialog = ({
   onClose,
 }: EditTransactionDialogProps) => {
   const isXcl = useIsXcl();
+  const payersOwnFirst = isXcl ? ["xcl", "catb"] : ["catb", "xcl"];
 
   const [title, setTitle] = useState<string | undefined>(transaction?.title);
   const titleError = title !== undefined && title.trim() === "";
@@ -49,16 +50,16 @@ export const EditTransactionDialog = ({
 
   const [actualPayers, setActualPayers] = useState<Record<string, string>>(
     transaction
-      ? mapValues(transaction.actualPayers, (value) => value.toFixed(2))
+      ? mapValues(
+          pickBy(transaction.actualPayers, (value) => value > 0),
+          (value) => value.toFixed(2)
+        )
       : {}
   );
 
-  const actualPayersError =
-    isEmpty(actualPayers) ||
-    Object.values(actualPayers).some(
-      (value) =>
-        value.trim() === "" || isNaN(Number(value)) || Number(value) <= 0
-    );
+  const actualPayersError = Object.values(actualPayers).some(
+    (value) => value.trim() === "" || isNaN(Number(value)) || Number(value) < 0
+  );
 
   const [showAllPayers, setShowAllPayers] = useState(() => {
     if (!transaction) return false;
@@ -71,31 +72,65 @@ export const EditTransactionDialog = ({
 
   const shownPayers = (() => {
     if (!showAllPayers) {
-      return isXcl ? ["xcl"] : ["catb"];
+      const currentPayers = Object.keys(actualPayers);
+      return currentPayers.length ? currentPayers : isXcl ? ["xcl"] : ["catb"];
     }
 
-    return isXcl ? ["xcl", "catb"] : ["catb", "xcl"];
+    return payersOwnFirst;
   })();
 
   const [idealPayerShares, setIdealPayerShares] = useState<
-    Record<string, number>
-  >(transaction?.idealPayerShares ?? defaultIdealPayerShares);
-
-  const [showIdealShares, setShowIdealShares] = useState(() =>
-    isEqual(idealPayerShares, defaultIdealPayerShares)
+    Record<string, string>
+  >(() =>
+    mapValues(
+      pickBy(
+        transaction?.idealPayerShares ?? defaultIdealPayerShares,
+        (value) => value > 0
+      ),
+      (value) => value.toString()
+    )
   );
 
+  const [showIdealShares, setShowIdealShares] = useState(
+    () =>
+      !isEqual(
+        idealPayerShares,
+        mapValues(
+          pickBy(defaultIdealPayerShares, (value) => value > 0),
+          (value) => value.toString()
+        )
+      )
+  );
+
+  const idealPayersError =
+    isEmpty(idealPayerShares) ||
+    Object.values(idealPayerShares).some(
+      (value) =>
+        value.trim() === "" || isNaN(Number(value)) || Number(value) < 0
+    );
+
   const canSubmit =
-    title && !titleError && sum(Object.values(actualPayers)) > 0;
+    title &&
+    !titleError &&
+    sum(Object.values(actualPayers).map((value) => Number(value))) > 0;
 
   const onSubmit = async () => {
     const editedTransaction: TransactionData = {
       id: transaction?.id ?? crypto.randomUUID(),
       actualPayers: pickBy(
-        mapValues(actualPayers, (value) => Number(value)),
+        mapValues(
+          pickBy(actualPayers, (value) => !isNaN(Number(value))),
+          (value) => Number(value)
+        ),
         (value) => value > 0
       ),
-      idealPayerShares: pickBy(idealPayerShares, (value) => value > 0),
+      idealPayerShares: pickBy(
+        mapValues(
+          pickBy(idealPayerShares, (value) => !isNaN(Number(value))),
+          (value) => Number(value)
+        ),
+        (value) => value > 0
+      ),
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
       title: title ?? "Invalid transaction",
@@ -137,21 +172,58 @@ export const EditTransactionDialog = ({
         />
         {shownPayers.map((payer) => (
           <TextField
+            key={`payer-${payer}`}
             error={actualPayersError}
             label={`${payer} paid`}
-            variant="standard"
+            variant="outlined"
             type="number"
             value={actualPayers[payer] ?? ""}
             onBlur={() =>
-              setActualPayers((old) => ({ ...old, payer: old[payer] ?? "" }))
+              setActualPayers((old) => ({ ...old, [payer]: old[payer] ?? "" }))
             }
             onChange={(event) =>
-              setActualPayers((old) => ({ ...old, payer: event.target.value }))
+              setActualPayers((old) => ({
+                ...old,
+                [payer]: event.target.value,
+              }))
             }
           />
         ))}
-        <Button>Add payers</Button>
-        <Button>Change ideal shares</Button>
+        {!showAllPayers && (
+          <Button onClick={() => setShowAllPayers(true)}>Add payers</Button>
+        )}
+        {!showIdealShares && (
+          <Button onClick={() => setShowIdealShares(true)}>
+            Change ideal shares
+          </Button>
+        )}
+        {showIdealShares && (
+          <>
+            <h4>Ideal shares</h4>
+            {payersOwnFirst.map((payer) => (
+              <TextField
+                key={`ideal-share-${payer}`}
+                error={idealPayersError}
+                label={`${payer} share`}
+                variant="outlined"
+                type="number"
+                value={idealPayerShares[payer] ?? ""}
+                onBlur={() =>
+                  setIdealPayerShares((old) => ({
+                    ...old,
+                    [payer]: old[payer] ?? "",
+                  }))
+                }
+                onChange={(event) =>
+                  setIdealPayerShares((old) => ({
+                    ...old,
+                    [payer]: event.target.value,
+                  }))
+                }
+              />
+            ))}
+          </>
+        )}
       </TransactionDialogContent>
       <DialogActions>
         <Button
