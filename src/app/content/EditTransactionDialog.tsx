@@ -10,24 +10,22 @@ import emotionStyled from "@emotion/styled";
 import { DatePicker } from "@mui/x-date-pickers";
 import { DateTime } from "luxon";
 import { useState } from "react";
-import { isEqual } from "lodash";
+import { isEmpty, isEqual, mapValues, pickBy, sum } from "lodash";
 import {
   defaultIdealPayerShares,
   TransactionData,
-} from "../../../business/TransactionData";
-import { useIsXcl } from "../../../authentication/authentication";
-import { CustomShares } from "../CustomShares";
+} from "../../business/TransactionData";
+import { useIsXcl } from "../../authentication/authentication";
 import {
   addTransaction,
   editTransaction,
-} from "../../../firebase/transactions/transactionInstances";
-import { ShareRadioGroup, ShareType } from "./ShareRadioGroup";
+} from "../../firebase/transactions/transactionInstances";
 import { writeBatch } from "firebase/firestore/lite";
-import { database } from "../../../firebase/config";
+import { database } from "../../firebase/config";
 import {
   addTotal,
   editTotal,
-} from "../../../firebase/transactions/transactionTotals";
+} from "../../firebase/transactions/transactionTotals";
 
 type EditTransactionDialogProps = {
   transaction?: TransactionData;
@@ -43,71 +41,64 @@ export const EditTransactionDialog = ({
   const [title, setTitle] = useState<string | undefined>(transaction?.title);
   const titleError = title !== undefined && title.trim() === "";
 
-  const [amount, setAmount] = useState<string | undefined>(
-    transaction?.totalAmount.toFixed(2)
-  );
-
-  const amountError =
-    amount !== undefined &&
-    (amount.trim() === "" || isNaN(Number(amount)) || Number(amount) <= 0);
-
   const [date, setDate] = useState(
     transaction
       ? DateTime.fromJSDate(transaction.transactionDate)
       : DateTime.now()
   );
 
-  const [owedShares, setOwedShares] = useState<ShareType>(() => {
-    if (!transaction) {
-      return isXcl ? "xcl" : "catb";
-    }
+  const [actualPayers, setActualPayers] = useState<Record<string, string>>(
+    transaction
+      ? mapValues(transaction.actualPayers, (value) => value.toFixed(2))
+      : {}
+  );
 
-    if (!isEqual(transaction.idealPayerShares, defaultIdealPayerShares)) {
-      return "custom";
-    }
+  const actualPayersError =
+    isEmpty(actualPayers) ||
+    Object.values(actualPayers).some(
+      (value) =>
+        value.trim() === "" || isNaN(Number(value)) || Number(value) <= 0
+    );
 
-    if (
-      transaction.actualPayerShares["xcl"] &&
-      !transaction.actualPayerShares["catb"]
-    ) {
-      return "xcl";
-    }
+  const [showAllPayers, setShowAllPayers] = useState(() => {
+    if (!transaction) return false;
 
-    if (
-      !transaction.actualPayerShares["xcl"] &&
-      transaction.actualPayerShares["catb"]
-    ) {
-      return "catb";
-    }
-
-    return "custom";
+    return (
+      Object.keys(pickBy(transaction.actualPayers, (value) => value > 0))
+        .length >= 2
+    );
   });
 
-  const [actualPayerShares, setActualPayerShares] = useState<
-    Record<string, number>
-  >(transaction?.actualPayerShares ?? { xcl: 0.5, catb: 0.5 });
+  const shownPayers = (() => {
+    if (!showAllPayers) {
+      return isXcl ? ["xcl"] : ["catb"];
+    }
+
+    return isXcl ? ["xcl", "catb"] : ["catb", "xcl"];
+  })();
 
   const [idealPayerShares, setIdealPayerShares] = useState<
     Record<string, number>
   >(transaction?.idealPayerShares ?? defaultIdealPayerShares);
 
-  const canSubmit = title && !titleError && amount && !amountError;
+  const [showIdealShares, setShowIdealShares] = useState(() =>
+    isEqual(idealPayerShares, defaultIdealPayerShares)
+  );
+
+  const canSubmit =
+    title && !titleError && sum(Object.values(actualPayers)) > 0;
 
   const onSubmit = async () => {
-    const editedTransaction = {
+    const editedTransaction: TransactionData = {
       id: transaction?.id ?? crypto.randomUUID(),
-      actualPayerShares:
-        owedShares === "xcl"
-          ? { xcl: 1 }
-          : owedShares === "catb"
-          ? { catb: 1 }
-          : actualPayerShares,
-      idealPayerShares:
-        owedShares === "custom" ? idealPayerShares : defaultIdealPayerShares,
+      actualPayers: pickBy(
+        mapValues(actualPayers, (value) => Number(value)),
+        (value) => value > 0
+      ),
+      idealPayerShares: pickBy(idealPayerShares, (value) => value > 0),
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
       title: title ?? "Invalid transaction",
-      totalAmount: Number(amount),
     };
 
     try {
@@ -140,33 +131,27 @@ export const EditTransactionDialog = ({
           onBlur={() => setTitle((old) => old ?? "")}
           onChange={(event) => setTitle(event.target.value)}
         />
-        <TextField
-          error={amountError}
-          label="Amount"
-          variant="standard"
-          type="number"
-          value={amount ?? ""}
-          onBlur={() => setAmount((old) => old ?? "")}
-          onChange={(event) => setAmount(event.target.value)}
-        />
         <DatePicker
           value={date}
           onChange={(newDate) => newDate && setDate(newDate)}
         />
-        <ShareRadioGroup
-          shareType={owedShares}
-          onShareTypeChanged={setOwedShares}
-        />
-        {owedShares === "custom" && (
-          <CustomShares
-            defaultActualPayerShares={actualPayerShares}
-            defaultIdealPayerShares={idealPayerShares}
-            onChange={(actual, ideal) => {
-              setActualPayerShares(actual);
-              setIdealPayerShares(ideal);
-            }}
+        {shownPayers.map((payer) => (
+          <TextField
+            error={actualPayersError}
+            label={`${payer} paid`}
+            variant="standard"
+            type="number"
+            value={actualPayers[payer] ?? ""}
+            onBlur={() =>
+              setActualPayers((old) => ({ ...old, payer: old[payer] ?? "" }))
+            }
+            onChange={(event) =>
+              setActualPayers((old) => ({ ...old, payer: event.target.value }))
+            }
           />
-        )}
+        ))}
+        <Button>Add payers</Button>
+        <Button>Change ideal shares</Button>
       </TransactionDialogContent>
       <DialogActions>
         <Button

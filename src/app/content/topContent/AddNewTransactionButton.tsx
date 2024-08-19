@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
-import { EditTransactionDialog } from "../editTransaction/EditTransactionDialog";
+import { EditTransactionDialog } from "../EditTransactionDialog";
 
 export const AddNewTransactionButton = () => {
   const [dialogOpen, setDialogOpen] = useState(false);

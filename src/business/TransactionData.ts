@@ -4,8 +4,7 @@ export type TransactionData = {
   id: string;
   transactionDate: Date;
   addedDate: Date;
-  totalAmount: number;
-  actualPayerShares: Record<string, number>;
+  actualPayers: Record<string, number>;
   idealPayerShares: Record<string, number>;
   title: string;
 };
