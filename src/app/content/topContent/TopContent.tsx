@@ -4,12 +4,14 @@ import { AddNewTransactionButton } from "./AddNewTransactionButton";
 import { SortTransactionByButton } from "./SortTransactionByButton";
 import { SettingsButton } from "./settings/SettingsButton";
 
+const showSettings = (() => false)();
+
 export const TopContent = () => (
   <Container>
     <LeftSideContainer>
       <AddNewTransactionButton />
       <SortTransactionByButton />
-      <SettingsButton />
+      {showSettings && <SettingsButton />}
     </LeftSideContainer>
     <Balance />
   </Container>
