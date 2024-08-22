@@ -4,6 +4,7 @@ import { theme } from "../../../theme/muiTheme";
 import emotionStyled from "@emotion/styled";
 import { useTransactionTotal } from "../../../firebase/transactions/transactionTotals";
 import { CircularProgress } from "@mui/material";
+import { computeBalance } from "../../../business/computeBalance";
 
 export const Balance = () => {
   const isXcl = useIsXcl();
@@ -17,7 +18,9 @@ export const Balance = () => {
     return "error";
   }
 
-  const { totalPaid, totalIdeal } = data;
+  const { totalPaid, totalIdeal } = computeBalance([
+    { actualPayers: data.totalPaid, idealPayerShares: data.totalIdeal },
+  ]);
 
   const allPayers = uniq([
     ...Object.keys(totalPaid),
