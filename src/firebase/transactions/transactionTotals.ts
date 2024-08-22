@@ -62,7 +62,7 @@ export const useFetchTransactionTotal = () => {
         }
 
         transactionTotalState.data =
-          documentsSnapshot.docs[0].data() as TransactionTotal;
+          documentsSnapshot.docs[0].data() as unknown as TransactionTotal;
         transactionTotalState.loadingError = false;
       } catch (error) {
         transactionTotalState.data = undefined;

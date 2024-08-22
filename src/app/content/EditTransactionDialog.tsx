@@ -134,6 +134,7 @@ export const EditTransactionDialog = ({
       addedDate: new Date(),
       transactionDate: date.toJSDate(),
       title: title ?? "Invalid transaction",
+      transactionType: "instance",
     };
 
     try {

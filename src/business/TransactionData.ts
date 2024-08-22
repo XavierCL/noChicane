@@ -7,12 +7,14 @@ export type TransactionData = {
   actualPayers: Record<string, number>;
   idealPayerShares: Record<string, number>;
   title: string;
+  transactionType: "instance";
 };
 
 export type TransactionTotal = {
   id: string;
   totalPaid: Record<string, number>;
   totalIdeal: Record<string, number>;
+  transactionType: "instance";
 };
 
 export type OrderField = "transactionDate" | "addedDate";

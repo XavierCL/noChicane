@@ -4,7 +4,7 @@ import { AddNewTransactionButton } from "./AddNewTransactionButton";
 import { SortTransactionByButton } from "./SortTransactionByButton";
 import { SettingsButton } from "./settings/SettingsButton";
 
-const showSettings = (() => false)();
+const showSettings = (() => true)();
 
 export const TopContent = () => (
   <Container>
