@@ -6,7 +6,7 @@ import {
   useTransactions,
 } from "../../firebase/transactions/transactionInstances";
 import { orderBy } from "lodash";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 const INFINITE_SCROLL_OFFSET = 30;
 
@@ -21,7 +21,7 @@ export const TransactionList = () => {
 
   const sortedTransactions = orderBy(transactions, orderField, "desc");
 
-  const onScroll = () => {
+  const fetchMoreTransactionsIfAtBottom = useCallback(() => {
     if (!tableContainerRef.current) return;
 
     if (
@@ -32,10 +32,18 @@ export const TransactionList = () => {
     ) {
       fetchMoreTransactions();
     }
-  };
+  }, []);
+
+  // Fetch more when the transaction list shrinks
+  useEffect(() => {
+    fetchMoreTransactionsIfAtBottom();
+  }, [transactions.length, fetchMoreTransactionsIfAtBottom]);
 
   return (
-    <TableContainer ref={tableContainerRef} onScroll={onScroll}>
+    <TableContainer
+      ref={tableContainerRef}
+      onScroll={fetchMoreTransactionsIfAtBottom}
+    >
       {sortedTransactions.map((transaction) => (
         <TransactionCard key={transaction.id} transaction={transaction} />
       ))}
