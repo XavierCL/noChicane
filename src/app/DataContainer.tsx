@@ -3,7 +3,6 @@ import { useFetchTransactionTotal } from "../firebase/transactions/transactionTo
 import { useReactiveTransactions } from "../firebase/transactions/useReactiveTransactions";
 
 export const DataContainer = () => {
-  console.log("Data rendered!");
   useFetchTransactions();
   useFetchTransactionTotal();
   useReactiveTransactions();
