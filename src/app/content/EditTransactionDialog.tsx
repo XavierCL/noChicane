@@ -20,7 +20,7 @@ import {
   addTransaction,
   editTransaction,
 } from "../../firebase/transactions/transactionInstances";
-import { writeBatch } from "firebase/firestore/lite";
+import { writeBatch } from "firebase/firestore";
 import { database } from "../../firebase/config";
 import {
   addTotal,

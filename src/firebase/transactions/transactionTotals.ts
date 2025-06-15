@@ -1,10 +1,4 @@
-import {
-  doc,
-  getDocs,
-  query,
-  where,
-  WriteBatch,
-} from "firebase/firestore/lite";
+import { doc, getDocs, query, where, WriteBatch } from "firebase/firestore";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
 import {

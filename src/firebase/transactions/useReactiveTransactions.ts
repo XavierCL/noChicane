@@ -6,6 +6,7 @@ import {
 } from "./transactionTotals";
 import { transactionState } from "./transactionInstances";
 import { TransactionTotal } from "../../business/TransactionData";
+import { isEqual } from "lodash";
 
 export const useReactiveTransactions = () => {
   useEffect(() => {
@@ -17,6 +18,10 @@ export const useReactiveTransactions = () => {
 
       const newTransactionTotal =
         changeData.docs[0].data() as unknown as TransactionTotal;
+
+      if (isEqual(transactionTotalState.data, newTransactionTotal)) {
+        return;
+      }
 
       if (!transactionTotalState.data) {
         transactionTotalState.data = newTransactionTotal;

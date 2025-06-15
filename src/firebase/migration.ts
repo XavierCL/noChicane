@@ -1,4 +1,4 @@
-import { getDocs, query, writeBatch } from "firebase/firestore/lite";
+import { getDocs, query, writeBatch } from "firebase/firestore";
 import { database } from "./config";
 import {
   FirebaseTransaction,
