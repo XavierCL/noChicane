@@ -31,5 +31,5 @@ export const useReactiveTransactions = () => {
 
       transactionState.resets += 1;
     });
-  });
+  }, []);
 };
