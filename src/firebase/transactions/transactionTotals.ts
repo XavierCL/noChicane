@@ -18,12 +18,10 @@ export const transactionTotalState = proxy<{
   // 0 for loading done. Natural number for loading in progress.
   loadingVersion: number;
   loadingError: boolean;
-  resets: number;
 }>({
   data: undefined,
   loadingVersion: 1,
   loadingError: false,
-  resets: 0,
 });
 
 export const transactionTotalQuery = query<
@@ -32,8 +30,6 @@ export const transactionTotalQuery = query<
 >(transactionCollection, where("transactionType", "==", "total"));
 
 export const useFetchTransactionTotal = () => {
-  const { resets } = useSnapshot(transactionTotalState);
-
   useEffect(() => {
     (async () => {
       const loadingVersion = transactionTotalState.loadingVersion + 1;
@@ -72,7 +68,7 @@ export const useFetchTransactionTotal = () => {
         }
       }
     })();
-  }, [resets]);
+  }, []);
 };
 
 export const useTransactionTotal = () => useSnapshot(transactionTotalState);

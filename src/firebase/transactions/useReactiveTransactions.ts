@@ -31,20 +31,5 @@ export const useReactiveTransactions = () => {
 
       transactionState.resets += 1;
     });
-  }, []);
-
-  // Make the the PWA refresh its data when the page is moved to the foreground.
-  useEffect(() => {
-    const reloadTransactions = () => {
-      if (document.visibilityState === "visible") {
-        transactionState.resets += 1;
-        transactionTotalState.resets += 1;
-      }
-    };
-
-    document.addEventListener("visibilitychange", reloadTransactions);
-
-    return () =>
-      document.removeEventListener("visibilitychange", reloadTransactions);
-  }, []);
+  });
 };
