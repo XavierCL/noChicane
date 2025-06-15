@@ -30,18 +30,21 @@ export const transactionState = proxy<{
   loadingVersion: number;
   loadingError: boolean;
   orderField: OrderField;
+  // Resets the data every time this increments
+  resets: number;
 }>({
   data: [],
   moreData: true,
   loadingVersion: 1,
   loadingError: false,
   orderField: "transactionDate",
+  resets: 0,
 });
 
 export const useTransactions = () => useSnapshot(transactionState);
 
 export const useFetchTransactions = () => {
-  const { orderField } = useTransactions();
+  const { orderField, resets } = useTransactions();
 
   useEffect(() => {
     (async () => {
@@ -86,7 +89,7 @@ export const useFetchTransactions = () => {
         }
       }
     })();
-  }, [orderField]);
+  }, [orderField, resets]);
 };
 
 export const fetchMoreTransactions = async () => {

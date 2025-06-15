@@ -2,15 +2,12 @@ import emotionStyled from "@emotion/styled";
 import { ApplicationHeader } from "./header/ApplicationHeader";
 import { TopContent } from "./content/topContent/TopContent";
 import { TransactionList } from "./content/TransactionList";
-import { useFetchTransactions } from "../firebase/transactions/transactionInstances";
-import { useFetchTransactionTotal } from "../firebase/transactions/transactionTotals";
+import { DataContainer } from "./DataContainer";
 
 export const AuthenticatedApp = () => {
-  useFetchTransactions();
-  useFetchTransactionTotal();
-
   return (
     <>
+      <DataContainer />
       <ApplicationHeader />
       <ApplicationContainer>
         <TopContent />

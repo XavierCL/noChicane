@@ -30,6 +30,11 @@ export const transactionTotalState = proxy<{
   loadingError: false,
 });
 
+export const transactionTotalQuery = query<
+  FirebaseTransaction,
+  FirebaseTransaction
+>(transactionCollection, where("transactionType", "==", "total"));
+
 export const useFetchTransactionTotal = () => {
   useEffect(() => {
     (async () => {
@@ -38,15 +43,10 @@ export const useFetchTransactionTotal = () => {
       try {
         transactionTotalState.loadingVersion = loadingVersion;
 
-        const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-          transactionCollection,
-          where("transactionType", "==", "total")
-        );
-
         const documentsSnapshot = await getDocs<
           FirebaseTransaction,
           FirebaseTransaction
-        >(initialQuery);
+        >(transactionTotalQuery);
 
         if (loadingVersion !== transactionTotalState.loadingVersion) return;
 

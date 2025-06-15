@@ -1,4 +1,4 @@
-import { collection, CollectionReference } from "firebase/firestore/lite";
+import { collection, CollectionReference } from "firebase/firestore";
 import { database } from "../config";
 
 export type FirebaseTransactionInstance = {
