@@ -10,11 +10,11 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import emotionStyled from "@emotion/styled";
-import { OrderField } from "../../../business/TransactionData";
+import { OrderField } from "#/business/TransactionData";
 import {
   transactionState,
   useTransactions,
-} from "../../../firebase/transactions/transactionInstances";
+} from "#/firebase/transactions/transactionInstances";
 
 const SORT_OPTIONS: { field: OrderField; label: string }[] = [
   { field: "transactionDate", label: "Transaction date" },

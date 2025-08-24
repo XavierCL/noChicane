@@ -14,18 +14,15 @@ import { isEmpty, isEqual, mapValues, pickBy, sum } from "lodash";
 import {
   defaultIdealPayerShares,
   TransactionData,
-} from "../../business/TransactionData";
-import { useIsXcl } from "../../authentication/authentication";
+} from "#/business/TransactionData";
+import { useIsXcl } from "#/authentication/authentication";
 import {
   addTransaction,
   editTransaction,
-} from "../../firebase/transactions/transactionInstances";
+} from "#/firebase/transactions/transactionInstances";
 import { writeBatch } from "firebase/firestore";
-import { database } from "../../firebase/config";
-import {
-  addTotal,
-  editTotal,
-} from "../../firebase/transactions/transactionTotals";
+import { database } from "#/firebase/config";
+import { addTotal, editTotal } from "#/firebase/transactions/transactionTotals";
 
 type EditTransactionDialogProps = {
   transaction?: TransactionData;

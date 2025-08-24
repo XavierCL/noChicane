@@ -5,11 +5,11 @@ import { mapValues, sum, uniq } from "lodash";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
-import { useIsXcl } from "../../../authentication/authentication";
-import { theme } from "../../../theme/muiTheme";
-import { TransactionData } from "../../../business/TransactionData";
+import { useIsXcl } from "#/authentication/authentication";
+import { theme } from "#/theme/muiTheme";
+import { TransactionData } from "#/business/TransactionData";
 import { EditTransactionDialog } from "../EditTransactionDialog";
-import { useTransactions } from "../../../firebase/transactions/transactionInstances";
+import { useTransactions } from "#/firebase/transactions/transactionInstances";
 
 type TransactionCardProps = {
   transaction: TransactionData;

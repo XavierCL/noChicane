@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
-import { executeMigration } from "../../../../firebase/migration";
+import { executeMigration } from "#/firebase/migration";
 
 const showMigrations = (() => true)();
 

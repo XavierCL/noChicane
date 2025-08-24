@@ -4,7 +4,7 @@ import { CircularProgress } from "@mui/material";
 import {
   fetchMoreTransactions,
   useTransactions,
-} from "../../firebase/transactions/transactionInstances";
+} from "#/firebase/transactions/transactionInstances";
 import { orderBy } from "lodash";
 import { useCallback, useEffect, useRef } from "react";
 

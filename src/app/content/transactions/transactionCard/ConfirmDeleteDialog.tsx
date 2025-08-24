@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
-import { deleteTransaction } from "../../../firebase/transactions/transactionInstances";
+import { deleteTransaction } from "#/firebase/transactions/transactionInstances";
 import { writeBatch } from "firebase/firestore";
-import { database } from "../../../firebase/config";
-import { deleteTotal } from "../../../firebase/transactions/transactionTotals";
-import { TransactionData } from "../../../business/TransactionData";
+import { database } from "#/firebase/config";
+import { deleteTotal } from "#/firebase/transactions/transactionTotals";
+import { TransactionData } from "#/business/TransactionData";
 
 type ConfirmDeleteDialogProps = {
   transaction: TransactionData;
