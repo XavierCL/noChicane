@@ -14,7 +14,7 @@ import { isEmpty, isEqual, mapValues, pickBy, sum } from "lodash";
 import {
   defaultIdealPayerShares,
   TransactionData,
-} from "#/business/TransactionData";
+} from "#/business/transactions/TransactionData";
 import { useIsXcl } from "#/authentication/authentication";
 import {
   addTransaction,

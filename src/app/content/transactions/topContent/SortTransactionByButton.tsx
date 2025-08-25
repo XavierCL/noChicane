@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import emotionStyled from "@emotion/styled";
-import { OrderField } from "#/business/TransactionData";
+import { OrderField } from "#/business/transactions/TransactionData";
 import {
   transactionState,
   useTransactions,

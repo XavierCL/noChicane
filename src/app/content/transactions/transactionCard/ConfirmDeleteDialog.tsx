@@ -3,7 +3,7 @@ import { deleteTransaction } from "#/firebase/transactions/transactionInstances"
 import { writeBatch } from "firebase/firestore";
 import { database } from "#/firebase/config";
 import { deleteTotal } from "#/firebase/transactions/transactionTotals";
-import { TransactionData } from "#/business/TransactionData";
+import { TransactionData } from "#/business/transactions/TransactionData";
 
 type ConfirmDeleteDialogProps = {
   transaction: TransactionData;

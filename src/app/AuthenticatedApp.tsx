@@ -1,13 +1,16 @@
 import emotionStyled from "@emotion/styled";
 import { ApplicationHeader } from "./header/ApplicationHeader";
-import { TransactionPage } from "./content/transactions/TransactionPage";
+import { useDefaultLocation } from "#/navigation/useDefaultLocation";
+import { FamilyRouter } from "./families/FamilyRouter";
 
 export const AuthenticatedApp = () => {
+  useDefaultLocation();
+
   return (
     <>
       <ApplicationHeader />
       <ApplicationContainer>
-        <TransactionPage />
+        <FamilyRouter />
       </ApplicationContainer>
     </>
   );

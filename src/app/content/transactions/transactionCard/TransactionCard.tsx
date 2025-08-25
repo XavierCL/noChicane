@@ -7,7 +7,7 @@ import { useState } from "react";
 import Edit from "@mui/icons-material/Edit";
 import { useIsXcl } from "#/authentication/authentication";
 import { theme } from "#/theme/muiTheme";
-import { TransactionData } from "#/business/TransactionData";
+import { TransactionData } from "#/business/transactions/TransactionData";
 import { EditTransactionDialog } from "../EditTransactionDialog";
 import { useTransactions } from "#/firebase/transactions/transactionInstances";
 

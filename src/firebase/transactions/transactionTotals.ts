@@ -4,14 +4,14 @@ import { proxy, useSnapshot } from "valtio";
 import {
   TransactionData,
   TransactionTotal,
-} from "../../business/TransactionData";
+} from "../../business/transactions/TransactionData";
 import { database } from "../config";
 import {
   FirebaseTransaction,
   TRANSACTION_COLLECTION_NAME,
   transactionCollection,
 } from "./transactionCollection";
-import { computeBalance } from "../../business/computeBalance";
+import { computeBalance } from "../../business/transactions/computeBalance";
 
 export const transactionTotalState = proxy<{
   data?: TransactionTotal;

@@ -5,7 +5,7 @@ import {
   transactionTotalState,
 } from "./transactionTotals";
 import { transactionState } from "./transactionInstances";
-import { TransactionTotal } from "../../business/TransactionData";
+import { TransactionTotal } from "../../business/transactions/TransactionData";
 import { isEqual } from "lodash";
 
 export const useReactiveTransactions = () => {

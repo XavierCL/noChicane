@@ -4,7 +4,7 @@ import { theme } from "#/theme/muiTheme";
 import emotionStyled from "@emotion/styled";
 import { useTransactionTotal } from "#/firebase/transactions/transactionTotals";
 import { CircularProgress } from "@mui/material";
-import { computeBalance } from "#/business/computeBalance";
+import { computeBalance } from "#/business/transactions/computeBalance";
 
 export const Balance = () => {
   const isXcl = useIsXcl();

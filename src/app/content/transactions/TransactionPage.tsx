@@ -1,12 +1,12 @@
 import emotionStyled from "@emotion/styled";
 import { TopContent } from "./topContent/TopContent";
 import { TransactionList } from "./TransactionList";
-import { DataContainer } from "./DataContainer";
+import { TransactionDataContainer } from "./TransactionDataContainer";
 
 export const TransactionPage = () => {
   return (
     <>
-      <DataContainer />
+      <TransactionDataContainer />
       <TopContent />
       <MainTablesContainer>
         <TransactionList />

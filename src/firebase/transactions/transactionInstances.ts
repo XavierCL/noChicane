@@ -11,7 +11,10 @@ import {
 } from "firebase/firestore";
 import { useEffect } from "react";
 import { proxy, useSnapshot } from "valtio";
-import { OrderField, TransactionData } from "../../business/TransactionData";
+import {
+  OrderField,
+  TransactionData,
+} from "#/business/transactions/TransactionData";
 import { database } from "../config";
 import {
   FirebaseTransaction,
