@@ -3,6 +3,7 @@ import { firebaseApp } from "../firebase/config";
 import { GoogleAuthProvider } from "firebase/auth";
 
 export const firebaseAuth = getAuth(firebaseApp);
+export const XCL_UID = "CjpvbFe7Uod443sLQdkUMDhtgXD2";
 
 export const authProvider = new GoogleAuthProvider();
 let userCredential: User | undefined = undefined;
@@ -15,5 +16,5 @@ export const useAuthentication = () => {
 };
 
 export const useIsXcl = () => {
-  return useAuthentication().uid === "CjpvbFe7Uod443sLQdkUMDhtgXD2";
+  return useAuthentication().uid === XCL_UID;
 };

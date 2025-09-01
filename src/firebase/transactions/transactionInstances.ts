@@ -19,9 +19,10 @@ import { database } from "../config";
 import {
   FirebaseTransaction,
   FirebaseTransactionInstance,
-  TRANSACTION_COLLECTION_NAME,
-  transactionCollection,
+  getTransactionCollection,
+  getTransactionCollectionName,
 } from "./transactionCollection";
+import { familyState, useFamilies } from "../families/families";
 
 const PAGE_SIZE = 8;
 
@@ -48,25 +49,30 @@ export const useTransactions = () => useSnapshot(transactionState);
 
 export const useFetchTransactions = () => {
   const { orderField, resets } = useTransactions();
+  const { selectedFamily } = useFamilies();
 
   useEffect(() => {
+    if (!selectedFamily) return;
+
+    const transactionCollection = getTransactionCollection(selectedFamily.id);
+
+    const transactionQuery = query<FirebaseTransaction, FirebaseTransaction>(
+      transactionCollection,
+      where("transactionType", "==", "instance"),
+      orderBy(orderField, "desc"),
+      limit(PAGE_SIZE)
+    );
+
     (async () => {
       const loadingVersion = transactionState.loadingVersion + 1;
 
       try {
         transactionState.loadingVersion = loadingVersion;
 
-        const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-          transactionCollection,
-          where("transactionType", "==", "instance"),
-          orderBy(orderField, "desc"),
-          limit(PAGE_SIZE)
-        );
-
         const documentsSnapshot = await getDocs<
           FirebaseTransaction,
           FirebaseTransaction
-        >(initialQuery);
+        >(transactionQuery);
 
         if (loadingVersion !== transactionState.loadingVersion) return;
 
@@ -92,7 +98,7 @@ export const useFetchTransactions = () => {
         }
       }
     })();
-  }, [orderField, resets]);
+  }, [orderField, resets, selectedFamily]);
 };
 
 export const fetchMoreTransactions = async () => {
@@ -101,18 +107,24 @@ export const fetchMoreTransactions = async () => {
   if (!transactionState.latestPage) return;
   if (transactionState.loadingError) return;
 
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) return;
+
+  const transactionCollection = getTransactionCollection(selectedFamily.id);
+
+  const fetchMoreQuery = query<FirebaseTransaction, FirebaseTransaction>(
+    transactionCollection,
+    where("transactionType", "==", "instance"),
+    orderBy(transactionState.orderField, "desc"),
+    startAfter(transactionState.latestPage),
+    limit(PAGE_SIZE)
+  );
+
   const loadingVersion = transactionState.loadingVersion + 1;
 
   try {
     transactionState.loadingVersion = loadingVersion;
-
-    const fetchMoreQuery = query<FirebaseTransaction, FirebaseTransaction>(
-      transactionCollection,
-      where("transactionType", "==", "instance"),
-      orderBy(transactionState.orderField, "desc"),
-      startAfter(transactionState.latestPage),
-      limit(PAGE_SIZE)
-    );
 
     const documentsSnapshot = await getDocs<
       FirebaseTransaction,
@@ -147,9 +159,15 @@ export const addTransaction = (
   transactionData: TransactionData,
   batch: WriteBatch
 ) => {
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
   const documentReference = doc(
     database,
-    TRANSACTION_COLLECTION_NAME,
+    getTransactionCollectionName(selectedFamily.id),
     transactionData.id
   );
 
@@ -163,7 +181,17 @@ export const addTransaction = (
 };
 
 export const deleteTransaction = (id: string, batch: WriteBatch) => {
-  const documentReference = doc(database, TRANSACTION_COLLECTION_NAME, id);
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
+  const documentReference = doc(
+    database,
+    getTransactionCollectionName(selectedFamily.id),
+    id
+  );
   batch.delete(documentReference);
 
   transactionState.data = transactionState.data.filter(
@@ -175,9 +203,15 @@ export const editTransaction = (
   transactionData: TransactionData,
   batch: WriteBatch
 ) => {
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
   const documentReference = doc(
     database,
-    TRANSACTION_COLLECTION_NAME,
+    getTransactionCollectionName(selectedFamily.id),
     transactionData.id
   );
 

@@ -8,10 +8,11 @@ import {
 import { database } from "../config";
 import {
   FirebaseTransaction,
-  TRANSACTION_COLLECTION_NAME,
-  transactionCollection,
+  getTransactionCollection,
+  getTransactionCollectionName,
 } from "./transactionCollection";
 import { computeBalance } from "../../business/transactions/computeBalance";
+import { familyState, useFamilies } from "../families/families";
 
 export const transactionTotalState = proxy<{
   data?: TransactionTotal;
@@ -24,13 +25,19 @@ export const transactionTotalState = proxy<{
   loadingError: false,
 });
 
-export const transactionTotalQuery = query<
-  FirebaseTransaction,
-  FirebaseTransaction
->(transactionCollection, where("transactionType", "==", "total"));
-
 export const useFetchTransactionTotal = () => {
+  const { selectedFamily } = useFamilies();
+
   useEffect(() => {
+    if (!selectedFamily) return;
+
+    const transactionCollection = getTransactionCollection(selectedFamily.id);
+
+    const transactionTotalQuery = query<
+      FirebaseTransaction,
+      FirebaseTransaction
+    >(transactionCollection, where("transactionType", "==", "total"));
+
     (async () => {
       const loadingVersion = transactionTotalState.loadingVersion + 1;
 
@@ -68,7 +75,7 @@ export const useFetchTransactionTotal = () => {
         }
       }
     })();
-  }, []);
+  }, [selectedFamily]);
 };
 
 export const useTransactionTotal = () => useSnapshot(transactionTotalState);
@@ -81,6 +88,12 @@ export const addTotal = (
     throw new Error("Could not get the total transaction");
   }
 
+  const selectedFamily = familyState.selectedFamily;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
   const newTotals = computeBalance([
     {
       actualPayers: transactionTotalState.data.totalPaid,
@@ -91,7 +104,7 @@ export const addTotal = (
 
   const documentReference = doc(
     database,
-    TRANSACTION_COLLECTION_NAME,
+    getTransactionCollectionName(selectedFamily.id),
     transactionTotalState.data.id
   );
 
@@ -109,6 +122,12 @@ export const editTotal = (
     throw new Error("Could not get the total transaction");
   }
 
+  const selectedFamily = familyState.selectedFamily;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
   const newTotals = computeBalance([
     {
       actualPayers: transactionTotalState.data.totalPaid,
@@ -120,7 +139,7 @@ export const editTotal = (
 
   const documentReference = doc(
     database,
-    TRANSACTION_COLLECTION_NAME,
+    getTransactionCollectionName(selectedFamily.id),
     transactionTotalState.data.id
   );
 
@@ -137,6 +156,12 @@ export const deleteTotal = (
     throw new Error("Could not get the total transaction");
   }
 
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) {
+    throw new Error("No selected family");
+  }
+
   const newTotals = computeBalance([
     {
       actualPayers: transactionTotalState.data.totalPaid,
@@ -147,7 +172,7 @@ export const deleteTotal = (
 
   const documentReference = doc(
     database,
-    TRANSACTION_COLLECTION_NAME,
+    getTransactionCollectionName(selectedFamily.id),
     transactionTotalState.data.id
   );
 

@@ -22,8 +22,12 @@ export type FirebaseTransaction =
   | FirebaseTransactionInstance
   | FirebaseTransactionTotal;
 
-export const TRANSACTION_COLLECTION_NAME = "transactions";
-export const transactionCollection = collection(
-  database,
-  TRANSACTION_COLLECTION_NAME
-) as CollectionReference<FirebaseTransaction, FirebaseTransaction>;
+export const getTransactionCollectionName = (familyId: string) =>
+  `families/${familyId}/transactions`;
+
+export const getTransactionCollection = (familyId: string) => {
+  return collection(
+    database,
+    getTransactionCollectionName(familyId)
+  ) as CollectionReference<FirebaseTransaction, FirebaseTransaction>;
+};

@@ -1,3 +1,4 @@
+import { navigateToHomePage } from "#/app/content/families/familyNavigation";
 import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -13,7 +14,7 @@ export const useDefaultLocation = () => {
 
   useEffect(() => {
     if (!browserLocation.pathname) {
-      history.pushState(undefined, "", "/home");
+      navigateToHomePage();
       return;
     }
 
