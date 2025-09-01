@@ -2,12 +2,17 @@ import { getDocs, query, writeBatch } from "firebase/firestore";
 import { database } from "./config";
 import {
   FirebaseTransaction,
-  transactionCollection,
+  getTransactionCollection,
 } from "./transactions/transactionCollection";
+import { familyState } from "./families/families";
 
 export const executeMigration = async () => {
+  const { selectedFamily } = familyState;
+
+  if (!selectedFamily) return;
+
   const initialQuery = query<FirebaseTransaction, FirebaseTransaction>(
-    transactionCollection
+    getTransactionCollection(selectedFamily.id)
   );
 
   const documentsSnapshot = await getDocs<

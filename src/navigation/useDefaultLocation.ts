@@ -13,11 +13,11 @@ export const useDefaultLocation = () => {
   );
 
   useEffect(() => {
-    if (!browserLocation.pathname) {
+    if (!browserLocation.pathname || browserLocation.pathname == "/") {
       navigateToHomePage();
       return;
     }
 
-    localStorage.SetItem(locationStorageName, browserLocation.pathname);
+    localStorage.setItem(locationStorageName, browserLocation.pathname);
   }, [browserLocation, initialLocalStorageLocation]);
 };

@@ -25,18 +25,22 @@ export const transactionTotalState = proxy<{
   loadingError: false,
 });
 
+export const getTransactionTotalQuery = (familyId: string) => {
+  const transactionCollection = getTransactionCollection(familyId);
+
+  return query<FirebaseTransaction, FirebaseTransaction>(
+    transactionCollection,
+    where("transactionType", "==", "total")
+  );
+};
+
 export const useFetchTransactionTotal = () => {
   const { selectedFamily } = useFamilies();
 
   useEffect(() => {
     if (!selectedFamily) return;
 
-    const transactionCollection = getTransactionCollection(selectedFamily.id);
-
-    const transactionTotalQuery = query<
-      FirebaseTransaction,
-      FirebaseTransaction
-    >(transactionCollection, where("transactionType", "==", "total"));
+    const transactionTotalQuery = getTransactionTotalQuery(selectedFamily.id);
 
     (async () => {
       const loadingVersion = transactionTotalState.loadingVersion + 1;
