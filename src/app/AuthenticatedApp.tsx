@@ -1,11 +1,8 @@
 import emotionStyled from "@emotion/styled";
 import { ApplicationHeader } from "./header/ApplicationHeader";
-import { useDefaultLocation } from "#/navigation/useDefaultLocation";
 import { FamilyRouter } from "./content/families/FamilyRouter";
 
 export const AuthenticatedApp = () => {
-  useDefaultLocation();
-
   return (
     <>
       <ApplicationHeader />

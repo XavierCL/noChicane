@@ -13,7 +13,6 @@ import {
   FirebaseTransactionTotal,
   getTransactionCollectionName,
 } from "../transactions/transactionCollection";
-import { navigateToFamily } from "#/app/content/families/familyNavigation";
 
 export const familyState = proxy<{
   selectedFamily?: FamilyData;
@@ -111,5 +110,5 @@ export const createFamily = (name: string) => {
   batch.commit();
 
   familyState.availableFamilies.push(newFamilyData);
-  navigateToFamily(newFamilyData.id);
+  return newFamilyData;
 };

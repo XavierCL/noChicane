@@ -1,9 +1,11 @@
 import { familyState } from "#/firebase/families/families";
 import Button from "@mui/material/Button";
 import { SettingsButton } from "./settings/SettingsButton";
-import { navigateToFamilySubPage } from "./familyNavigation";
+import { useNavigateToFamilySubPage } from "./familyNavigation";
 
 export const FamilyPage = () => {
+  const navigateToSubPage = useNavigateToFamilySubPage();
+
   return (
     <>
       <SettingsButton />
@@ -13,7 +15,7 @@ export const FamilyPage = () => {
 
           if (!selectedFamily) return;
 
-          navigateToFamilySubPage("transaction");
+          navigateToSubPage("transaction");
         }}
       >
         Transactions

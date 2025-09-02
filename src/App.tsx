@@ -4,17 +4,14 @@ import { AuthenticationProvider } from "./authentication/AuthenticationProvider"
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { AuthenticatedApp } from "./app/AuthenticatedApp";
-import { BrowserRouter } from "react-router-dom";
 
 export const App = () => (
   <LocalizationProvider dateAdapter={AdapterLuxon}>
     <ThemeProvider theme={muiTheme}>
-      <BrowserRouter>
-        <CssBaseline />
-        <AuthenticationProvider>
-          <AuthenticatedApp />
-        </AuthenticationProvider>
-      </BrowserRouter>
+      <CssBaseline />
+      <AuthenticationProvider>
+        <AuthenticatedApp />
+      </AuthenticationProvider>
     </ThemeProvider>
   </LocalizationProvider>
 );

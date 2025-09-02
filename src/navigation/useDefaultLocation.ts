@@ -1,4 +1,4 @@
-import { navigateToHomePage } from "#/app/content/families/familyNavigation";
+import { useNavigateToHomePage } from "#/app/content/families/familyNavigation";
 import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -6,6 +6,7 @@ const locationStorageName = "lastVisitedRoute";
 
 export const useDefaultLocation = () => {
   const browserLocation = useLocation();
+  const navigateToHomePage = useNavigateToHomePage();
 
   const initialLocalStorageLocation = useMemo(
     () => localStorage.getItem(locationStorageName),
@@ -19,5 +20,5 @@ export const useDefaultLocation = () => {
     }
 
     localStorage.setItem(locationStorageName, browserLocation.pathname);
-  }, [browserLocation, initialLocalStorageLocation]);
+  }, [browserLocation, initialLocalStorageLocation, navigateToHomePage]);
 };
